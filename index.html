@@ -1,0 +1,2026 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>芯片成本学习页 · Chip Cost Learning</title>
+<style>
+  :root{
+    --bg:#f6f7fb; --panel:#ffffff; --ink:#1b2030; --muted:#6b7280;
+    --brand:#2f6feb; --brand-2:#7c3aed; --line:#e5e7eb; --chip:#eef2ff;
+    --d1:#3b82f6; --d2:#10b981; --d3:#f59e0b; --d4:#ef4444; --d5:#8b5cf6;
+    --ok:#16a34a;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#0f1220; --panel:#161a2c; --ink:#e5e7eb; --muted:#9aa3b2; --line:#262b44; --chip:#1f2440;}
+  }
+  body.dark{--bg:#0f1220; --panel:#161a2c; --ink:#e5e7eb; --muted:#9aa3b2; --line:#262b44; --chip:#1f2440;}
+  body.light{--bg:#f6f7fb; --panel:#ffffff; --ink:#1b2030; --muted:#6b7280; --line:#e5e7eb; --chip:#eef2ff;}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+    font-size:14px;line-height:1.55}
+  a{color:var(--brand);text-decoration:none}
+  header{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:12px;padding:10px 16px}
+  header .title{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+  header .title .logo{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,var(--brand),var(--brand-2))}
+  header .search{flex:1;max-width:520px;position:relative}
+  header .search input{width:100%;padding:8px 12px 8px 34px;border-radius:10px;border:1px solid var(--line);
+    background:var(--bg);color:var(--ink);outline:none}
+  header .search svg{position:absolute;left:10px;top:9px;opacity:.6}
+  header .chip-picker{display:flex;gap:6px}
+  header .chip-picker button,header .theme{padding:6px 10px;border-radius:8px;border:1px solid var(--line);
+    background:var(--panel);color:var(--ink);cursor:pointer;font-size:12px}
+  header .chip-picker button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 54px)}
+  nav.side{border-right:1px solid var(--line);background:var(--panel);padding:10px}
+  nav.side .group{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:10px 8px 4px}
+  nav.side a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;color:var(--ink);cursor:pointer}
+  nav.side a:hover{background:var(--chip)}
+  nav.side a.active{background:var(--chip);color:var(--brand);font-weight:600}
+  nav.side a .pill{font-size:10px;padding:1px 6px;border-radius:999px;background:var(--chip);color:var(--muted)}
+  nav.side a.active .pill{background:var(--brand);color:#fff}
+  main{padding:18px 22px;max-width:1180px}
+  h1{font-size:22px;margin:4px 0 4px}
+  h2{font-size:18px;margin:22px 0 10px}
+  h3{font-size:15px;margin:14px 0 8px}
+  .sub{color:var(--muted);margin-top:2px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .grid{display:grid;gap:14px}
+  .grid.cols-2{grid-template-columns:1fr 1fr}
+  .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+  .grid.cols-5{grid-template-columns:repeat(5,1fr)}
+  @media(max-width:960px){.layout{grid-template-columns:1fr}nav.side{display:none}.grid.cols-2,.grid.cols-3,.grid.cols-5{grid-template-columns:1fr}}
+  .kpi{display:flex;flex-direction:column;gap:4px}
+  .kpi .val{font-size:22px;font-weight:700}
+  .kpi .label{color:var(--muted);font-size:12px}
+  .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;background:var(--chip);color:var(--ink)}
+  .tag.d1{background:rgba(59,130,246,.15);color:var(--d1)}
+  .tag.d2{background:rgba(16,185,129,.15);color:var(--d2)}
+  .tag.d3{background:rgba(245,158,11,.15);color:var(--d3)}
+  .tag.d4{background:rgba(239,68,68,.15);color:var(--d4)}
+  .tag.d5{background:rgba(139,92,246,.15);color:var(--d5)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:12px;background:var(--panel);position:sticky;top:0}
+  tbody tr{cursor:pointer}
+  tbody tr:hover{background:var(--chip)}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+  .filters select,.filters input{padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:min(460px,92vw);background:var(--panel);
+    border-left:1px solid var(--line);padding:18px;overflow-y:auto;transform:translateX(100%);
+    transition:transform .25s ease;z-index:50;box-shadow:-12px 0 30px rgba(0,0,0,.1)}
+  .drawer.open{transform:translateX(0)}
+  .drawer .close{float:right;border:0;background:transparent;font-size:20px;cursor:pointer;color:var(--muted)}
+  .drawer h3{margin-top:0}
+  .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s;z-index:40}
+  .backdrop.show{opacity:1;pointer-events:auto}
+  .formula{font-family:ui-monospace,Menlo,monospace;background:var(--chip);padding:10px 12px;border-radius:10px;display:block;white-space:pre-wrap}
+  .bar{height:10px;border-radius:999px;background:var(--chip);overflow:hidden;display:flex}
+  .bar span{display:block;height:100%}
+  .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:middle}
+  .calc-form label{display:block;font-size:12px;color:var(--muted);margin-top:8px}
+  .calc-form input,.calc-form select{width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+  .out-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line)}
+  .out-row:last-child{border-bottom:0}
+  .out-row b{font-variant-numeric:tabular-nums}
+  .hidden{display:none!important}
+  .hint{color:var(--muted);font-size:12px}
+  .pyramid-tier{cursor:pointer;transition:opacity .2s}
+  .pyramid-tier:hover{opacity:.85}
+  footer{padding:18px 22px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);margin-top:20px}
+  .breadcrumb{color:var(--muted);font-size:12px;margin-bottom:2px}
+  .search-results{position:absolute;top:40px;left:0;right:0;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.1);max-height:360px;overflow:auto;z-index:30;display:none}
+  .search-results.show{display:block}
+  .search-results .group-h{padding:6px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;background:var(--chip)}
+  .search-results .item{padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--line)}
+  .search-results .item:hover{background:var(--chip)}
+  /* Modal */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:60;padding:18px}
+  .modal.show{display:flex}
+  .modal-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;width:min(560px,100%);max-height:90vh;overflow:auto;padding:18px}
+  .modal-card h3{margin-top:0}
+  .row-actions{display:flex;gap:6px;justify-content:flex-end}
+  .btn{padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font-size:12px}
+  .btn:hover{background:var(--chip)}
+  .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .btn.danger{color:#fff;background:#ef4444;border-color:#ef4444}
+  .btn.ghost{background:transparent}
+  .btn.sm{padding:3px 8px;font-size:11px}
+  .table-toolbar{display:flex;justify-content:space-between;align-items:center;margin:8px 0 8px}
+  .table-toolbar .left{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .group-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+  .group-card .group-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .group-card .group-head h3{margin:0}
+  .supplier-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+  .supplier-tile{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg);position:relative;cursor:pointer;transition:transform .12s}
+  .supplier-tile:hover{transform:translateY(-2px);border-color:var(--brand)}
+  .supplier-tile .name{font-weight:600;font-size:13px}
+  .supplier-tile .role{color:var(--muted);font-size:11px;margin-top:2px;line-height:1.4}
+  .supplier-tile .region{display:inline-block;font-size:10px;padding:1px 6px;border-radius:999px;background:var(--chip);color:var(--muted);margin-top:6px}
+  .supplier-tile .ops{position:absolute;top:6px;right:6px;display:none;gap:4px}
+  .supplier-tile:hover .ops{display:flex}
+  .layer-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .layer-tabs button{padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font-size:12px}
+  .layer-tabs button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .highlight-box{border:2px dashed var(--brand);border-radius:12px;padding:10px 14px;background:linear-gradient(90deg,rgba(47,111,235,.08),rgba(124,58,237,.08));margin-top:10px}
+  .highlight-box .num{font-size:32px;font-weight:800;color:var(--brand)}
+  .pct-bar-row{display:flex;align-items:center;gap:8px;margin:6px 0}
+  .pct-bar-row .lbl{flex:0 0 130px;font-size:12px}
+  .pct-bar-row .bar2{flex:1;height:14px;background:var(--chip);border-radius:999px;overflow:hidden}
+  .pct-bar-row .bar2 span{display:block;height:100%;background:var(--brand)}
+  .pct-bar-row .pct{flex:0 0 50px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+  .matrix-table th,.matrix-table td{font-size:12px;text-align:right;padding:6px 8px}
+  .matrix-table th:first-child,.matrix-table td:first-child{text-align:left;font-weight:600}
+  .matrix-table td.empty{color:var(--muted);opacity:.5}
+</style>
+</head>
+<body class="light">
+<header>
+  <div class="title"><span class="logo"></span>芯片成本学习页 <span class="hint">Chip Cost for PM</span></div>
+  <div class="search">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input id="globalSearch" placeholder="搜索：成本项 / 供应商 / 术语 / 公式…" autocomplete="off"/>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+  <div class="chip-picker" id="chipPicker"></div>
+  <button class="btn" id="chipMgrBtn" title="管理对标芯片">···</button>
+  <button class="theme" id="themeBtn">切换主题</button>
+</header>
+
+<div class="layout">
+  <nav class="side" id="nav">
+    <div class="group">金字塔 · Pyramid</div>
+    <a data-tab="overview" class="active"><span class="pill">L1</span>总览</a>
+    <a data-tab="domains"><span class="pill">L2</span>五大成本域</a>
+    <a data-tab="items"><span class="pill">L3</span>成本明细项</a>
+    <a data-tab="suppliers"><span class="pill">L4</span>供应商</a>
+    <a data-tab="chips"><span class="pill">★</span>芯片对比</a>
+    <a data-tab="packages"><span class="pill">+</span>封装形式</a>
+    <a data-tab="wafer"><span class="pill">+</span>晶圆价格</a>
+    <div class="group">工具 · Tools</div>
+    <a data-tab="calc">成本计算器</a>
+    <a data-tab="formulas">公式推导</a>
+    <a data-tab="glossary">术语表</a>
+  </nav>
+
+  <main id="main">
+    <!-- Sections injected by JS -->
+  </main>
+</div>
+
+<div class="backdrop" id="backdrop"></div>
+<aside class="drawer" id="drawer">
+  <button class="close" id="drawerClose">×</button>
+  <div id="drawerBody"></div>
+</aside>
+
+<div class="modal" id="editModal">
+  <div class="modal-card">
+    <h3 id="editTitle">编辑</h3>
+    <div id="editBody"></div>
+    <div class="row-actions" style="margin-top:14px">
+      <button class="btn ghost" id="editCancel">取消</button>
+      <button class="btn primary" id="editSave">保存</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  数值均为基于公开资料的量级估算，仅作教学示意，不构成报价或投资建议。 ·
+  对标芯片：Rockchip RK3566 / RK3588（边缘侧 SoC）。
+</footer>
+
+<script>
+/* ========== 1. DATA ========== */
+const DOMAINS = [
+  {id:'D1',name:'Silicon Die（硅片）',color:'var(--d1)',pct:[55,50], // [RK3566, RK3588]
+    drivers:'工艺节点 / Die 面积 / 良率',
+    description:'裸片本身的制造成本，由晶圆价格除以每片晶圆上良品 Die 数得到。占总成本最大比重，随工艺节点前进而急剧上升。'},
+  {id:'D2',name:'Package（封装）',color:'var(--d2)',pct:[14,16],
+    drivers:'封装形式 / 基板层数 / Pin 数',
+    description:'把裸片封成可焊接的器件。边缘 SoC 通常用 FCBGA / LFBGA；引脚数与基板层数是主要成本杠杆。'},
+  {id:'D3',name:'Test（测试）',color:'var(--d3)',pct:[7,9],
+    drivers:'ATE 机时 × 测试时间',
+    description:'包含晶圆级 CP、终测 FT、以及高端 SoC 常见的 SLT。ATE 机时单价与每颗测试秒数直接相乘得到。'},
+  {id:'D4',name:'NRE 摊销',color:'var(--d4)',pct:[9,13],
+    drivers:'掩膜版 / 设计投入 / 摊销销量',
+    description:'Non-Recurring Engineering：掩膜版、EDA License、设计团队工资等一次性投入，按预期总销量摊销到每颗上。'},
+  {id:'D5',name:'IP 版税 + 综合',color:'var(--d5)',pct:[15,12],
+    drivers:'Arm 版税 / 物流 / 毛利',
+    description:'每颗都要付的 IP 版税（如 Arm）、物流仓储关税、RMA 失效准备金、公司与渠道毛利的合集。'}
+];
+
+const COST_ITEMS = [
+  // D1
+  {id:'I11',name:'晶圆价格 Wafer Price',domainId:'D1',phase:'Front-end',type:'Recurring',
+    drivers:'工艺节点、代工厂、签约量',
+    range:'22nm ~USD 2.5k/片；8nm ~USD 6.5k/片；5nm ~USD 16k/片',
+    description:'12 英寸晶圆出厂价。工艺越先进、单片面积不变但步骤更多、价格越贵。',
+    supplierIds:['TSMC','Samsung','SMIC','UMC','Intel','GF']},
+  {id:'I12',name:'Die 面积 Die Area',domainId:'D1',phase:'Design',type:'NRE-driven',
+    drivers:'功能模块数、SRAM 容量、PPA 目标',
+    range:'RK3566 ≈ 60 mm²，RK3588 ≈ 110 mm²',
+    description:'Die 越大，单片晶圆出 Die 数越少，且受缺陷影响更严重（良率下降），是硅成本的核心杠杆。',
+    supplierIds:[]},
+  {id:'I13',name:'DPW 每片出 Die 数',domainId:'D1',phase:'Front-end',type:'Derived',
+    drivers:'晶圆直径、Die 面积',
+    range:'公式：DPW = π·(D/2)²/S − π·D/√(2·S)',
+    description:'Die Per Wafer。考虑边缘不完整 Die 的近似公式。12 英寸晶圆直径 D=300 mm。',
+    supplierIds:[]},
+  {id:'I14',name:'缺陷密度 D0 与良率',domainId:'D1',phase:'Front-end',type:'Derived',
+    drivers:'工艺成熟度、Fab 运行时间',
+    range:'成熟工艺 D0 ≈ 0.10–0.20 /cm²',
+    description:'采用 Murphy 模型：Y = ((1 − e^(−A·D0))/(A·D0))²。Die 越大良率越低。',
+    supplierIds:[]},
+  {id:'I15',name:'晶圆级测试 CP',domainId:'D1',phase:'Front-end',type:'Recurring',
+    drivers:'探针机时、测试向量长度',
+    range:'占 Die 成本的 1%–3%',
+    description:'Circuit Probe，用探针卡在晶圆上对每颗 Die 进行初筛，失效的在后道不会去封装。',
+    supplierIds:['Teradyne','Advantest']},
+  // D2
+  {id:'I21',name:'封装基板 Substrate',domainId:'D2',phase:'Back-end',type:'Recurring',
+    drivers:'层数、材料（BT/ABF）、尺寸',
+    range:'LFBGA ~USD 0.2；大 FCBGA ~USD 1–3',
+    description:'把 Die 的上千个 bump/pad 扇出到 PCB 焊盘。层数越多成本越高，ABF 基板用于高端 SoC。',
+    supplierIds:['Unimicron','Ibiden','Shinko','Kinsus']},
+  {id:'I22',name:'OSAT 组装工序',domainId:'D2',phase:'Back-end',type:'Recurring',
+    drivers:'工艺类型（WB/FC/Advanced）',
+    range:'边缘 SoC ~USD 0.4–2/颗',
+    description:'倒装、回流、植球、塑封、切割等工序。高端 SoC 常用 FC-CSP/FCBGA，HPC 才用 CoWoS。',
+    supplierIds:['ASE','Amkor','JCET','SPIL','PTI','Tongfu']},
+  {id:'I23',name:'引线框 / 塑封料',domainId:'D2',phase:'Back-end',type:'Recurring',
+    drivers:'材料规格',
+    range:'占封装成本 10%–20%',
+    description:'QFN/SOP 类封装使用引线框；塑封料是 EMC（Epoxy Molding Compound）。',
+    supplierIds:[]},
+  // D3
+  {id:'I31',name:'终测 FT',domainId:'D3',phase:'Back-end',type:'Recurring',
+    drivers:'ATE 机时单价 × 测试秒数',
+    range:'~USD 0.2–1.5/颗',
+    description:'Final Test。封装后在 ATE 上运行完整测试向量，分选速度/品级。',
+    supplierIds:['Teradyne','Advantest','Cohu']},
+  {id:'I32',name:'系统级测试 SLT',domainId:'D3',phase:'Back-end',type:'Recurring',
+    drivers:'是否启用、测试时间',
+    range:'~USD 0.5–3/颗',
+    description:'在近似真实工况下启动 Linux/Android 跑测试项，RK3588 类高端 SoC 逐渐普及 SLT。',
+    supplierIds:[]},
+  {id:'I33',name:'老化 Burn-in',domainId:'D3',phase:'Back-end',type:'Optional',
+    drivers:'车规/工规要求',
+    range:'车规可达 ~USD 1–2/颗',
+    description:'在高温高压下长时间加电筛选早期失效。消费类通常省略。',
+    supplierIds:[]},
+  // D4
+  {id:'I41',name:'掩膜版 Mask Set',domainId:'D4',phase:'Tape-out',type:'NRE',
+    drivers:'工艺层数 × EUV/DUV',
+    range:'22nm ~USD 1–2M；8nm ~USD 10–15M；5nm ~USD 15–30M',
+    description:'整个工艺节点所需的全套光罩。NRE 中最显眼的一块，直接决定流片门槛。',
+    supplierIds:['Photronics','DNP','Toppan']},
+  {id:'I42',name:'EDA 工具 License',domainId:'D4',phase:'Design',type:'NRE',
+    drivers:'仿真/P&R/签核覆盖',
+    range:'中型项目 ~USD 1–3M/年',
+    description:'整套 EDA 工具租赁，按席位/时间/流程覆盖面计费。',
+    supplierIds:['Synopsys','Cadence','SiemensEDA']},
+  {id:'I43',name:'设计团队 + 外包',domainId:'D4',phase:'Design',type:'NRE',
+    drivers:'团队规模 × 项目周期',
+    range:'边缘 SoC ~USD 5–20M',
+    description:'RTL 设计、验证、物理实现、软件栈。自研 + 外包设计服务。',
+    supplierIds:[]},
+  {id:'I44',name:'原型与点亮',domainId:'D4',phase:'Bring-up',type:'NRE',
+    drivers:'工程批次数',
+    range:'~USD 0.5–2M',
+    description:'Engineering wafers、样片、点亮板、早期特性化。',
+    supplierIds:[]},
+  {id:'I45',name:'质量认证',domainId:'D4',phase:'Qualification',type:'NRE',
+    drivers:'目标市场（消费/工业/车规）',
+    range:'AEC-Q100 ~USD 0.3–1M',
+    description:'JEDEC 温循 / 湿热、AEC-Q100 车规、ISO 26262 功能安全、3C/FCC 合规。',
+    supplierIds:[]},
+  // D5
+  {id:'I51',name:'Arm CPU 版税',domainId:'D5',phase:'Ship',type:'Recurring',
+    drivers:'核数、架构（A55/A76/A78）',
+    range:'~USD 0.10–1.50/颗',
+    description:'按颗计费的 Royalty，合同 NDA，数值区间仅为公开传闻量级。',
+    supplierIds:['Arm']},
+  {id:'I52',name:'GPU/NPU/接口 IP 版税',domainId:'D5',phase:'Ship',type:'Recurring',
+    drivers:'是否外购 IP',
+    range:'~USD 0.05–0.50/颗',
+    description:'GPU（Mali/Imagination）、NPU、USB/PCIe/DDR PHY 等第三方 IP 的单颗版税。',
+    supplierIds:['Imagination','Synopsys','Cadence','Ceva','Alphawave']},
+  {id:'I53',name:'物流仓储关税',domainId:'D5',phase:'Ship',type:'Recurring',
+    drivers:'运输模式、目的地',
+    range:'占单颗 1%–3%',
+    description:'FOB/CIF、海运空运、关税与进口税。',
+    supplierIds:[]},
+  {id:'I54',name:'RMA / 失效准备金',domainId:'D5',phase:'After-sales',type:'Recurring',
+    drivers:'DPPM 指标',
+    range:'占单颗 0.5%–2%',
+    description:'按预期失效率（DPPM）计提的售后准备金。',
+    supplierIds:[]},
+  {id:'I55',name:'公司毛利 / 渠道毛利',domainId:'D5',phase:'Ship',type:'Recurring',
+    drivers:'商业模式',
+    range:'芯片公司毛利 40%–60%',
+    description:'从 COGS 到 ASP 之间的差额，支撑研发/销售/利润。',
+    supplierIds:[]},
+  // 封装形式明细（属 D2）
+  {id:'I24',name:'FCBGA 倒装球栅',domainId:'D2',phase:'Back-end',type:'Recurring',
+    drivers:'Pin数、基板层数、ABF材料',
+    range:'中高端 SoC ~USD 1.5–3.5/颗',
+    description:'Flip-Chip BGA，Die 上面倒装后用高密度基板扣到 PCB。RK3588 / 高端 SoC 主流。',
+    supplierIds:['ASE','Amkor','Unimicron','Ibiden']},
+  {id:'I25',name:'LFBGA 低高度球栅',domainId:'D2',phase:'Back-end',type:'Recurring',
+    drivers:'Pin数、基板',
+    range:'~USD 0.4–1.0/颗',
+    description:'Low-profile BGA，成本/高度低于 FCBGA，RK3566 / 中低端 SoC 常用。',
+    supplierIds:['ASE','JCET','SPIL']},
+  {id:'I26',name:'QFN/QFP 引线框封装',domainId:'D2',phase:'Back-end',type:'Recurring',
+    drivers:'Pin数、金丝长度',
+    range:'~USD 0.05–0.30/颗',
+    description:'引脚较少的 MCU/辅助芯片常用，采用金/铜丝键合。成本最低。',
+    supplierIds:['JCET','Tongfu','PTI']},
+  {id:'I27',name:'WLCSP 晶圆级封装',domainId:'D2',phase:'Back-end',type:'Recurring',
+    drivers:'Die尺寸、Bump节距',
+    range:'~USD 0.10–0.40/颗',
+    description:'直接在晶圆上完成封装，贴合原生裸片尺寸。手机 PMIC/传感器多用。',
+    supplierIds:['ASE','Amkor']},
+  {id:'I28',name:'SiP 系统级封装',domainId:'D2',phase:'Back-end',type:'Optional',
+    drivers:'多Die、被动元件、RDL',
+    range:'~USD 1–10/颗',
+    description:'在一个封装内集成多颗裸片（SoC + DDR + Flash + PMIC），抢占 PCB 面积。',
+    supplierIds:['ASE','Amkor']},
+  {id:'I29',name:'PoP 堆叠封装（DDR on top）',domainId:'D2',phase:'Back-end',type:'Optional',
+    drivers:'是否集成 LPDDR',
+    range:'额外 ~USD 0.4–1.5/颗',
+    description:'Package-on-Package：在 SoC 封装顶部叠上 LPDDR 内存包。手机 SoC 、RK3588 PoP 型号采用。',
+    supplierIds:['ASE','Amkor','Samsung','Micron','SKHynix']},
+  // DDR/存储 BoM（按 SiP/PoP 集成计入 D5，独立 SoC 不计入出厂成本）
+  {id:'I56',name:'LPDDR4 内存（1–4GB）',domainId:'D5',phase:'Ship',type:'Optional',
+    drivers:'容量、须与否 SiP/PoP',
+    range:'~USD 2.5–7.0/颗',
+    description:'RK3566 型号以 DDR 外置为主，BoM 中使用者自行采购；部分 SiP 型号会集成。',
+    supplierIds:['Samsung','SKHynix','Micron','Nanya','Winbond']},
+  {id:'I57',name:'LPDDR4X / LPDDR5（4–16GB）',domainId:'D5',phase:'Ship',type:'Optional',
+    drivers:'容量、代号',
+    range:'~USD 8–40/颗',
+    description:'RK3588 高端带 8GB/16GB，堆叠成本明显。价格随 DRAM 周期波动大。',
+    supplierIds:['Samsung','SKHynix','Micron']},
+  {id:'I58',name:'eMMC / UFS Flash',domainId:'D5',phase:'Ship',type:'Optional',
+    drivers:'容量、代号',
+    range:'~USD 2–20/颗',
+    description:'常与 SoC 封在同一 PCB / SiP。eMMC 5.1、UFS 2.2/3.1 主流。',
+    supplierIds:['Samsung','SKHynix','Micron','Kioxia','YMTC']}
+];
+
+/* ---- 晶圆价格矩阵（工艺节点 × 代工厂，12英寸、USD/片）---- */
+const WAFER_PRICES = [
+  {node:'40nm',  TSMC:1700, Samsung:1500, SMIC:1500, UMC:1600, GF:1600, Intel:null, HHGrace:1300, NexChip:1300},
+  {node:'28nm',  TSMC:2400, Samsung:2200, SMIC:2200, UMC:2200, GF:2200, Intel:null, HHGrace:2000, NexChip:2000},
+  {node:'22nm',  TSMC:2700, Samsung:2500, SMIC:2400, UMC:2400, GF:2300, Intel:null, HHGrace:null,NexChip:null},
+  {node:'16/14nm',TSMC:3700,Samsung:3500, SMIC:3500, UMC:null, GF:3000, Intel:3500, HHGrace:null,NexChip:null},
+  {node:'12nm',  TSMC:4500, Samsung:4200, SMIC:null, UMC:null, GF:3500, Intel:null, HHGrace:null,NexChip:null},
+  {node:'10/8nm',TSMC:6000, Samsung:6500, SMIC:null, UMC:null, GF:null, Intel:null, HHGrace:null,NexChip:null},
+  {node:'7nm',   TSMC:9500, Samsung:8500, SMIC:null, UMC:null, GF:null, Intel:null, HHGrace:null,NexChip:null},
+  {node:'5nm',   TSMC:16000,Samsung:14500,SMIC:null, UMC:null, GF:null, Intel:null, HHGrace:null,NexChip:null},
+  {node:'3nm',   TSMC:20000,Samsung:18000,SMIC:null, UMC:null, GF:null, Intel:null, HHGrace:null,NexChip:null}
+];
+const WAFER_FOUNDRIES = ['TSMC','Samsung','SMIC','UMC','GF','Intel','HHGrace','NexChip'];
+const WAFER_FOUNDRY_NAMES = {TSMC:'台积电',Samsung:'三星',SMIC:'中芯国际',UMC:'联电',GF:'GlobalFoundries',Intel:'Intel Foundry',HHGrace:'华虹宏力',NexChip:'晶合集成'};
+
+/* ---- 封装形式参考库 ---- */
+const PACKAGE_FORMATS = [
+  {id:'FCBGA',  name:'FCBGA',          fullName:'Flip-Chip BGA',     pinRange:'400–2000+', costRange:'$1.5–3.5', useCase:'高端 SoC / GPU / FPGA（RK3588）', suppliers:'ASE、Amkor、欣兴基板'},
+  {id:'LFBGA',  name:'LFBGA',          fullName:'Low-profile BGA',   pinRange:'200–800',   costRange:'$0.4–1.0', useCase:'中低端 SoC（RK3566）、嵌入式', suppliers:'ASE、JCET、SPIL'},
+  {id:'WLCSP',  name:'WLCSP',          fullName:'Wafer Level CSP',   pinRange:'<200',      costRange:'$0.1–0.4', useCase:'手机 PMIC / Sensor / 小 Die', suppliers:'ASE、Amkor'},
+  {id:'FC-CSP', name:'FC-CSP',         fullName:'Flip-Chip CSP',     pinRange:'200–600',   costRange:'$0.5–1.5', useCase:'手机 SoC / RF / Modem', suppliers:'ASE、SPIL'},
+  {id:'QFN',    name:'QFN/QFP',        fullName:'Quad Flat (No-)lead',pinRange:'16–128',   costRange:'$0.05–0.30',useCase:'MCU / 电源 / 辅助芯片', suppliers:'JCET、通富、力成'},
+  {id:'SiP',    name:'SiP',            fullName:'System-in-Package', pinRange:'定制',     costRange:'$1–10',    useCase:'多Die集成、智能手表、AirPods', suppliers:'ASE、Amkor、Murata'},
+  {id:'PoP',    name:'PoP',            fullName:'Package-on-Package',pinRange:'堆叠',     costRange:'+$0.4–1.5',useCase:'SoC 顶部叠 LPDDR（手机）', suppliers:'ASE、Amkor'},
+  {id:'CoWoS',  name:'CoWoS',          fullName:'Chip-on-Wafer-on-Substrate',pinRange:'HBM集成',costRange:'$30–100+', useCase:'AI 加速器 / HPC（非边缘）', suppliers:'TSMC独供'}
+];
+
+const SUPPLIERS = [
+  /* ====== IP 设计服务 ====== */
+  {id:'Arm',name:'Arm',layer:'IP',region:'英国',hq:'剑桥',founded:1990,website:'arm.com',role:'CPU IP 巨头（Cortex-A/R/M / Mali GPU）',
+   capabilities:['CPU IP','GPU IP','NPU IP (Ethos)','总线 IP (AMBA)','设计服务'],
+   products:['Cortex-A55/A76/A78/X3','Cortex-M0/M3/M33/M55','Mali-G52/G610','Ethos-N78/U55'],
+   notes:'RK3566 用 4×A55+Mali-G52；RK3588 用 4×A76+4×A55+Mali-G610。计费 = License 一次性 + Royalty 0.5–1%/颗。'},
+  {id:'Synopsys',name:'Synopsys 新思科技',layer:'EDA/IP',region:'美国',hq:'冈拉辛迪',founded:1986,website:'synopsys.com',role:'EDA 龙头 + DesignWare 接口 IP',
+   capabilities:['逻辑综合 (DC)','物理设计 (Fusion)','签核 (PT)','仿真','接口 IP'],
+   products:['Design Compiler','IC Compiler II','PrimeTime','VCS','DesignWare USB/PCIe/DDR/MIPI'],
+   notes:'EDA 三巨头之一。中国区由 EDA 事业部服务本土客户。'},
+  {id:'Cadence',name:'Cadence 思唯',layer:'EDA/IP',region:'美国',hq:'圣他克拉拉',founded:1988,website:'cadence.com',role:'EDA + Tensilica DSP IP',
+   capabilities:['模拟仿真 (Spectre)','数字实现','硬件仿真加速','封装/PCB EDA','DSP IP'],
+   products:['Virtuoso','Innovus','Genus','Palladium','Tensilica HiFi/Vision DSP'],
+   notes:'Tensilica HiFi DSP 广泛被音频芯片集成。'},
+  {id:'SiemensEDA',name:'Siemens EDA',layer:'EDA',region:'德国/美国',hq:'慕尼黑/奥勒冈',founded:2017,website:'eda.sw.siemens.com',role:'EDA（原 Mentor）',
+   capabilities:['物理验证 (Calibre)','PCB 设计','电子气液','高级封装'],
+   products:['Calibre','Tessent','Xpedition','HyperLynx'],
+   notes:'Calibre 是 Tape-out 前签核事实标准。'},
+  {id:'Imagination',name:'Imagination Tech',layer:'IP',region:'英国',hq:'圣尔抵斯',founded:1985,website:'imaginationtech.com',role:'PowerVR GPU / NPU IP',
+   capabilities:['GPU IP','NPU IP','光追踪','车载 ISP'],
+   products:['IMG BXT/BXM/BXS','PowerVR Series9XE','IMG NNA'],
+   notes:'被中资背景股东控股；RISC-V Catapult 产品线。'},
+  {id:'Ceva',name:'Ceva',layer:'IP',region:'以色列/美国',hq:'特拉维夫',founded:1999,website:'ceva-dsp.com',role:'DSP / 无线 IP',
+   capabilities:['DSP IP','Bluetooth IP','Wi-Fi IP','语音 AI'],
+   products:['CEVA-XC / SensPro / NeuPro-M','RivieraWaves BT/WiFi'],notes:''},
+  {id:'Alphawave',name:'Alphawave Semi',layer:'IP',region:'加拿大',hq:'多伦多',founded:2017,website:'awavesemi.com',role:'高速 SerDes / Chiplet IP',
+   capabilities:['112G SerDes','UCIe Chiplet','PCIe Gen6','HBM3 PHY'],products:['SerDes 112G/224G','UCIe-A/D'],notes:''},
+  {id:'SiFive',name:'SiFive',layer:'IP',region:'美国',hq:'圣克拉拉',founded:2015,website:'sifive.com',role:'RISC-V CPU IP',
+   capabilities:['RISC-V CPU IP','定制核服务'],products:['U74/U54','P650/P870','X280 Vector'],notes:''},
+  {id:'Andes',name:'晶心科技 Andes',layer:'IP',region:'中国台湾',hq:'新竹',founded:2005,website:'andestech.com',role:'RISC-V CPU IP',
+   capabilities:['RISC-V CPU IP','AI 加速器核'],products:['AndesCore N25/D45/A25','NX27V Vector'],notes:''},
+  /* 国内 IP / EDA */
+  {id:'VeriSilicon',name:'芯原股份 VeriSilicon',layer:'IP',region:'中国大陆',hq:'上海',founded:2001,website:'verisilicon.com',role:'一站式芯片定制 + GPU/NPU/ISP IP',
+   capabilities:['SoC 定制设计服务','GPU IP (Vivante)','NPU IP (VIP)','ISP IP','VPU IP'],
+   products:['Vivante GC GPU','VIP9000 NPU','Hantro VPU','ZSP DSP'],
+   notes:'国内最大 IP/设计服务商，主板 Mali 以外的选择。'},
+  {id:'Innosilicon',name:'芯动科技 Innosilicon',layer:'IP',region:'中国大陆',hq:'武汉',founded:2006,website:'innosilicon.com.cn',role:'高速接口 IP / GDDR PHY / GPU',
+   capabilities:['DDR/LPDDR/GDDR PHY','PCIe/SerDes','HDMI/DP','独立 GPU 芯片'],
+   products:['DDR4/5 PHY','GDDR6X','Fenghua 风华GPU'],notes:''},
+  {id:'Acmesemi',name:'锐成芯微 Acmesemi',layer:'IP',region:'中国大陆',hq:'成都',founded:2008,website:'acmesemi.com',role:'模拟 / 接口 IP',
+   capabilities:['模拟 IP','电源 IP','接口 IP'],products:['LDO/PMU','USB PHY','LPDDR PHY'],notes:''},
+  {id:'Empyrean',name:'华大九天 Empyrean',layer:'EDA',region:'中国大陆',hq:'北京',founded:2009,website:'empyrean.com.cn',role:'国产 EDA 龙头',
+   capabilities:['模拟全流程','面板设计全流程','存储器 EDA','快仿真'],
+   products:['ALPS','Aether','Argus','XTime'],
+   notes:'A 股上市（688150）。国产替代主力。'},
+  {id:'Primarius',name:'概伦电子 Primarius',layer:'EDA',region:'中国大陆',hq:'上海',founded:2010,website:'primarius-tech.com',role:'器件建模 / 电路仿真 EDA',
+   capabilities:['SPICE 建模','快仿真','存储 EDA'],products:['NanoSpice','BSIMProPlus'],notes:'A 股上市（688206）。'},
+  {id:'Semitronix',name:'广立微 Semitronix',layer:'EDA',region:'中国大陆',hq:'杭州',founded:2003,website:'semitronix.com',role:'良率提升 / 量测 EDA',
+   capabilities:['良率提升','量测机','电性测试'],products:['DataExa','T4080'],notes:'A 股上市（301095）。'},
+  {id:'XEPIC',name:'芯华章 X-EPIC',layer:'EDA',region:'中国大陆',hq:'南京',founded:2020,website:'x-epic.com',role:'数字验证 EDA',
+   capabilities:['仿真器','形式验证','硬件仿真加速'],products:['GalaxSim','GalaxFV','GalaxEC'],notes:''},
+
+  /* ====== Foundry 晶圆代工 ====== */
+  {id:'TSMC',name:'台积电 TSMC',layer:'Foundry',region:'中国台湾',hq:'新竹',founded:1987,website:'tsmc.com',role:'全球最先进逻辑代工龙头',
+   capabilities:['N3/N2 先进逻辑','CoWoS 先进封装','车规 N5A','RF/MS'],
+   products:['N3E/N3P','N5/N4P','N7/N6','16FFC','22ULL','28HPC+'],notes:'N3/N2 量产龙头。'},
+  {id:'Samsung',name:'三星代工 Samsung Foundry',layer:'Foundry',region:'韩国',hq:'首尔',founded:2005,website:'samsungfoundry.com',role:'先进节点 + RK3588 代工',
+   capabilities:['3GAE GAA','5LPE/4LPE','8LPP','GDDR6X 集成'],products:['SF3','SF4','SF5','8LPP','14LPP'],notes:'8LPP 量产 RK3588 量级产品。'},
+  {id:'Intel',name:'Intel Foundry',layer:'Foundry',region:'美国',hq:'圣克拉拉',founded:1968,website:'intel.com/foundry',role:'18A/20A 先进节点',
+   capabilities:['Intel 18A (PowerVia+RibbonFET)','Intel 3','Foveros 3D 封装'],products:['Intel 18A','Intel 3','Intel 4','Intel 16'],notes:''},
+  {id:'GF',name:'GlobalFoundries',layer:'Foundry',region:'美国',hq:'马尔塔',founded:2009,website:'gf.com',role:'成熟 / 特色工艺',
+   capabilities:['22FDX FD-SOI','12LP','RF SOI','BCD'],products:['22FDX','12LP+','45RFSOI'],notes:''},
+  {id:'UMC',name:'联电 UMC',layer:'Foundry',region:'中国台湾',hq:'新竹',founded:1980,website:'umc.com',role:'成熟工艺（22/28nm）',
+   capabilities:['22ULP','28HLP','40LP','RF/eFlash'],products:['28HPC+','22ULP','40ULP'],notes:''},
+  {id:'SMIC',name:'中芯国际 SMIC',layer:'Foundry',region:'中国大陆',hq:'上海',founded:2000,website:'smics.com',role:'中国大陆代工龙头',
+   capabilities:['28/22nm','14nm FinFET','车规 / 特色工艺','BCD'],products:['28HKC+','22ULL','14LPP'],
+   notes:'A 股 + 港股（688981/981.HK）。RK3566 类 22nm 产能来源之一。'},
+  {id:'HHGrace',name:'华虹宏力 HHGrace',layer:'Foundry',region:'中国大陆',hq:'上海',founded:1996,website:'huahonggrace.com',role:'成熟 & 特色工艺',
+   capabilities:['55/40/28nm','BCD 电源','嵌入式 Flash','车规'],products:['28nm Logic','55/40 BCD','eFlash'],
+   notes:'电源管理 / 车规 / RF 主力。港股（1347.HK）。'},
+  {id:'NexChip',name:'晶合集成 NexChip',layer:'Foundry',region:'中国大陆',hq:'合肥',founded:2015,website:'nexchip.com.cn',role:'面板驱动 / 90–40nm',
+   capabilities:['DDIC','CIS','PMIC','MCU'],products:['90/55/40nm Logic','CIS 工艺'],notes:'A 股（68837x）。'},
+  {id:'Powerchip',name:'力积電 Powerchip',layer:'Foundry',region:'中国台湾',hq:'新竹',founded:1994,website:'psemi.com',role:'中端逻辑 / DRAM',capabilities:['25/40/55/90nm','DRAM','CIS','PMIC'],products:['DRAM Foundry','40nm Logic'],notes:''},
+  {id:'VIS',name:'世界先进 VIS',layer:'Foundry',region:'中国台湾',hq:'新竹',founded:1994,website:'vis.com.tw',role:'驱动 IC / 8 英寸为主',capabilities:['DDIC','PMIC','MCU','特色工艺'],products:['0.11µm–0.5µm'],notes:''},
+  {id:'TowerJazz',name:'TowerSemi',layer:'Foundry',region:'以色列',hq:'米格达拉姆',founded:1993,website:'towersemi.com',role:'特色工艺（RF/SiGe）',capabilities:['SiGe BiCMOS','RF SOI','CIS'],products:['65nm RF','SBC18','SBC55'],notes:'与 Intel 收购变动。'},
+  {id:'PSMC',name:'力晶 PSMC',layer:'Foundry',region:'中国台湾',hq:'新竹',founded:2019,website:'psmc.com',role:'逻辑/CIS 成熟工艺',capabilities:['25/40/55/90nm','CIS','MCU'],products:['Logic 25–55nm'],notes:''},
+  {id:'XMC',name:'武汉新芯 XMC',layer:'Foundry',region:'中国大陆',hq:'武汉',founded:2006,website:'xmcwh.com',role:'存储 + 特色工艺',capabilities:['NOR Flash','3D NAND 代工','CIS','MEMS'],products:['NOR 工艺','CMOS 图像'],notes:'长江存储控股。'},
+  {id:'SilanIC',name:'士兰微 Silan',layer:'Foundry',region:'中国大陆',hq:'杭州',founded:1997,website:'silan.com.cn',role:'IDM（电源/MCU/功率）',capabilities:['BCD','MOSFET','IGBT','MCU'],products:['电源 IC','功率器件'],notes:'A 股（600460）。'},
+  {id:'CRMicro',name:'华润微 CR Micro',layer:'Foundry',region:'中国大陆',hq:'无锡',founded:1983,website:'crmicro.com',role:'IDM（功率/MEMS/特色工艺）',capabilities:['8‒12 寸代工','MOSFET/IGBT','MEMS'],products:['电源 IC','功率器件','传感器'],notes:'A 股（68803x）。'},
+  {id:'YDM',name:'燕东微 ECAS',layer:'Foundry',region:'中国大陆',hq:'北京',founded:1987,website:'ydme.com',role:'成熟工艺 代工',capabilities:['CIS','PMIC','车规'],products:['0.11µm–0.5µm'],notes:''},
+  {id:'SMSC',name:'积塔半导体 SMSC',layer:'Foundry',region:'中国大陆',hq:'上海',founded:2017,website:'smsc-china.com',role:'成熟工艺 / 特色工艺',capabilities:['8/12 寸','车规','嵌入式 Flash'],products:['BCD','eFlash MCU'],notes:''},
+
+  /* ====== Mask 光罩 ====== */
+  {id:'Photronics',name:'Photronics',layer:'Mask',region:'美国',hq:'康涅狄格',founded:1969,website:'photronics.com',role:'光罩供应商',capabilities:['先进逻辑 Mask','FPD Mask'],products:['Photomask 7nm+'],notes:''},
+  {id:'DNP',name:'DNP 大日本印刷',layer:'Mask',region:'日本',hq:'东京',founded:1876,website:'dnp.co.jp',role:'光罩 & 材料',capabilities:['先进 Mask','EUV Pellicle','OLED FMM'],products:['EUV Mask','High-end Pellicle'],notes:''},
+  {id:'Toppan',name:'Toppan 凸版',layer:'Mask',region:'日本',hq:'东京',founded:1900,website:'toppan.com',role:'光罩 / 包装印刷',capabilities:['Mask','FPD Mask','BGA 基板'],products:['先进 Mask','FPD Mask'],notes:''},
+  {id:'Wellsemi',name:'路维光电 Wellsemi',layer:'Mask',region:'中国大陆',hq:'深圳',founded:2002,website:'wellsemi.com',role:'国产光罩',capabilities:['250nm 以上 Mask','FPD Mask'],products:['28–250nm Mask'],notes:'A 股（68810x）。'},
+  {id:'Qinmei',name:'清溢光电 Qingyi',layer:'Mask',region:'中国大陆',hq:'深圳',founded:1997,website:'qy-pe.com',role:'光罩',capabilities:['IC Mask','FPD Mask','触摸屏 Mask'],products:['Photomask'],notes:'A 股（002959）。'},
+
+  /* ====== Wafer 原生硅片 ====== */
+  {id:'ShinEtsu',name:'信越化学 Shin-Etsu',layer:'Wafer',region:'日本',hq:'东京',founded:1926,website:'shinetsu.co.jp',role:'硅片 Top 1',capabilities:['300mm 抛光片','EPI','SOI'],products:['300mm CZ','SOI Wafer'],notes:''},
+  {id:'SUMCO',name:'SUMCO',layer:'Wafer',region:'日本',hq:'东京',founded:1999,website:'sumcosi.com',role:'硅片 Top 2',capabilities:['300mm 抛光片','EPI','先进 FZ'],products:['300mm','SOI'],notes:''},
+  {id:'GlobalWafers',name:'环球晶圆 GlobalWafers',layer:'Wafer',region:'中国台湾',hq:'新竹',founded:2011,website:'gwafers.com',role:'硅片 No.3',capabilities:['200/300mm','SOI','SiC'],products:['CZ Wafer','EPI','SOI'],notes:''},
+  {id:'NSIG',name:'沪硅产业 NSIG',layer:'Wafer',region:'中国大陆',hq:'上海',founded:2015,website:'nsig.com',role:'国产 300mm 硅片领头',capabilities:['300mm 抛光/EPI/SOI','200mm','RF SOI'],products:['300mm CZ','EPI Wafer','SOI'],notes:'A 股（68812x）。'},
+  {id:'SinoWafer',name:'立昂微 Sino Wafer',layer:'Wafer',region:'中国大陆',hq:'杭州',founded:2002,website:'lionsemi.com',role:'半导体硅片',capabilities:['200mm','RF 双极','MEMS'],products:['8‒12寸 Wafer'],notes:'A 股（605358）。'},
+  {id:'TCLZh',name:'中环股份 TCL Zhonghuan',layer:'Wafer',region:'中国大陆',hq:'天津',founded:1958,website:'tjsemi.com',role:'半导体 + 光伏硅片',capabilities:['200/300mm','SiC','光伏硅'],products:['12寸 Logic Wafer','SiC 衅片'],notes:'A 股（002129）。'},
+
+  /* ====== OSAT 封装测试 ====== */
+  {id:'ASE',name:'日月光 ASE',layer:'OSAT',region:'中国台湾',hq:'高雄',founded:1984,website:'aseglobal.com',role:'全球 OSAT 龙头',capabilities:['FCBGA','SiP','WLCSP','PoP','Fan-out'],products:['FCBGA 封装','SiP 模组','TestService'],notes:'含 SPIL。'},
+  {id:'Amkor',name:'安靠 Amkor',layer:'OSAT',region:'美国/韩国',hq:'亚利桑那',founded:1968,website:'amkor.com',role:'OSAT No.2',capabilities:['FCBGA','MCM','SiP','RF'],products:['SLIM','SLIT','S-Connect Chiplet'],notes:''},
+  {id:'JCET',name:'长电科技 JCET',layer:'OSAT',region:'中国大陆',hq:'江阴',founded:2003,website:'jcetglobal.com',role:'本土最大 OSAT',capabilities:['FCBGA','XDFOI Chiplet','SiP','WLCSP'],products:['XDFOI 2.5D','eWLB','FCBGA'],notes:'A 股（600584），含星科金朋。'},
+  {id:'SPIL',name:'矽品 SPIL',layer:'OSAT',region:'中国台湾',hq:'台中',founded:1984,website:'spil.com.tw',role:'OSAT（ASE 子公司）',capabilities:['FCBGA','MCM','RF'],products:['FCBGA','LGA'],notes:''},
+  {id:'PTI',name:'力成 PTI',layer:'OSAT',region:'中国台湾',hq:'新竹',founded:1997,website:'powertech.com.tw',role:'存储 / SoC 封测',capabilities:['DRAM 封测','NAND 封测','BGA'],products:['DDR/LPDDR 封装','eMMC/UFS'],notes:''},
+  {id:'Tongfu',name:'通富微电 Tongfu',layer:'OSAT',region:'中国大陆',hq:'南通',founded:1997,website:'tfme.com',role:'OSAT（AMD 重要伙伴）',capabilities:['FCBGA','MCM','Chiplet','BGA'],products:['AMD 封装','FCBGA'],notes:'A 股（002156）。'},
+  {id:'HuaTian',name:'华天科技 HuaTian',layer:'OSAT',region:'中国大陆',hq:'天水',founded:2003,website:'tshtkj.com',role:'本土 OSAT 三巨头之一',capabilities:['QFN','FCBGA','SiP','WLCSP','Fan-out'],products:['eFlash 封装','FCBGA','MEMS'],notes:'A 股（002185）。'},
+  {id:'ChinaWLCSP',name:'晶方科技 China WLCSP',layer:'OSAT',region:'中国大陆',hq:'苏州',founded:2005,website:'chinawlcsp.com',role:'CIS / WLCSP 专家',capabilities:['WLCSP','CIS 封装','TSV','Glass'],products:['CIS 模组','12寸 WLCSP'],notes:'A 股（603005）。'},
+  {id:'ForeChip',name:'甬硅电子 ForeChip',layer:'OSAT',region:'中国大陆',hq:'宁波',founded:2017,website:'forechip.com',role:'中高端 OSAT',capabilities:['FCBGA','BGA','LGA','SiP'],products:['FCBGA','MEMS 封装'],notes:'A 股（68878x）。'},
+  {id:'Leadyo',name:'利扬芯片 Leadyo',layer:'OSAT',region:'中国大陆',hq:'东莞',founded:2010,website:'leadyo.com',role:'独立三方测试',capabilities:['CP/FT 测试','靠体验证'],products:['CP 测试','FT 测试'],notes:'A 股（68850x）。'},
+
+  /* ====== Substrate 封装基板 ====== */
+  {id:'Unimicron',name:'欣兴 Unimicron',layer:'Substrate',region:'中国台湾',hq:'桃园',founded:1990,website:'unimicron.com',role:'ABF 基板 Top',capabilities:['ABF','BT','CSP','HDI'],products:['FCBGA 基板','SiP 基板'],notes:''},
+  {id:'Ibiden',name:'揖斐电 Ibiden',layer:'Substrate',region:'日本',hq:'岐阜',founded:1912,website:'ibiden.com',role:'高端 ABF 基板',capabilities:['ABF 基板','HDI'],products:['Intel/AMD 高端基板'],notes:''},
+  {id:'Shinko',name:'新光电气 Shinko',layer:'Substrate',region:'日本',hq:'长野',founded:1946,website:'shinko.co.jp',role:'高端基板',capabilities:['ABF','BT','LGA','MEMS'],products:['BGA Substrate'],notes:''},
+  {id:'Kinsus',name:'景碑 Kinsus',layer:'Substrate',region:'中国台湾',hq:'桃园',founded:1997,website:'kinsus.com.tw',role:'基板',capabilities:['ABF','BT','CSP'],products:['FCBGA','LGA'],notes:''},
+  {id:'ATS',name:'AT&S',layer:'Substrate',region:'奥地利',hq:'莱锐尔夫',founded:1994,website:'ats.net',role:'高端 ABF',capabilities:['ABF','HDI','Embedded'],products:['FCBGA 基板'],notes:'AMD/Intel 供应。'},
+  {id:'Semco',name:'三星电机 Semco',layer:'Substrate',region:'韩国',hq:'首尔',founded:1973,website:'samsungsem.com',role:'高端基板 + MLCC',capabilities:['ABF','BGA','MLCC'],products:['FCBGA','MLCC'],notes:''},
+  {id:'SCC',name:'深南电路 SCC',layer:'Substrate',region:'中国大陆',hq:'深圳',founded:1984,website:'scc-cn.com',role:'国产 PCB / IC 基板',capabilities:['HDI','封装基板','高多层'],products:['FCBGA 基板','BT 基板'],notes:'A 股＀800213）。'},
+  {id:'Fastprint',name:'兴森科技 Fastprint',layer:'Substrate',region:'中国大陆',hq:'广州',founded:1999,website:'fastprint.com.cn',role:'高端 PCB / IC 基板',capabilities:['HDI','封装基板','柔性板'],products:['IC 基板','HDI'],notes:'A 股＀800270）。'},
+  {id:'WUS',name:'沪电股份 WUS',layer:'Substrate',region:'中国大陆',hq:'昆山',founded:2000,website:'wuselec.com',role:'高多层 PCB',capabilities:['高频 PCB','高多层','服务器基板'],products:['Server PCB'],notes:'A 股＀200463）。'},
+
+  /* ====== ATE 测试设备 ====== */
+  {id:'Teradyne',name:'泰瑞达 Teradyne',layer:'ATE',region:'美国',hq:'北读',founded:1960,website:'teradyne.com',role:'测试机',capabilities:['SoC ATE','存储 ATE','车规'],products:['UltraFLEX','J750','MagnumV'],notes:''},
+  {id:'Advantest',name:'爱德万 Advantest',layer:'ATE',region:'日本',hq:'东京',founded:1954,website:'advantest.com',role:'测试机',capabilities:['SoC ATE','存储 ATE','HBM 测试'],products:['V93000','T2000','T5851'],notes:''},
+  {id:'Cohu',name:'Cohu',layer:'ATE',region:'美国',hq:'圣地亚哥',founded:1947,website:'cohu.com',role:'Handler/测试',capabilities:['Handler','Contactor','探针'],products:['MATRiX Handler'],notes:''},
+  {id:'ChuangShi',name:'长川科技 ChuangShi',layer:'ATE',region:'中国大陆',hq:'杭州',founded:2008,website:'accotest.com',role:'国产测试机 / Handler',capabilities:['SoC ATE','Handler','分选机'],products:['CTA8200','STS8200'],notes:'A 股＀300604）。'},
+  {id:'Accotest',name:'华峰测控 Accotest',layer:'ATE',region:'中国大陆',hq:'北京',founded:1993,website:'accotest.com.cn',role:'国产模拟测试机',capabilities:['模拟 ATE','电源 ATE','MCU ATE'],products:['STS8200','STS8300'],notes:'A 股＀688200）。'},
+
+  /* ====== Memory 存储 ====== */
+  {id:'SKHynix',name:'SK Hynix 海力士',layer:'Memory',region:'韩国',hq:'首尔',founded:1983,website:'skhynix.com',role:'DRAM / NAND 二哥',capabilities:['DRAM','NAND','HBM3','LPDDR5'],products:['LPDDR4X/5','DDR4/5','HBM3','UFS'],notes:'HBM3 主供 NVIDIA H100。'},
+  {id:'Micron',name:'Micron 美光',layer:'Memory',region:'美国',hq:'博伊西',founded:1978,website:'micron.com',role:'DRAM / NAND',capabilities:['DRAM','NAND','HBM','LPDDR5'],products:['LPDDR4X/5','DDR4/5','UFS3.1','HBM3E'],notes:''},
+  {id:'Nanya',name:'南亚科技 Nanya',layer:'Memory',region:'中国台湾',hq:'桃园',founded:1995,website:'nanya.com',role:'主要 DDR3/4',capabilities:['DDR3','DDR4','LPDDR4'],products:['DDR3 1G/2G','DDR4 4G/8G'],notes:''},
+  {id:'Winbond',name:'华邦电子 Winbond',layer:'Memory',region:'中国台湾',hq:'中和',founded:1987,website:'winbond.com',role:'利基 DRAM / NOR Flash',capabilities:['NOR Flash','SDRAM','LPDDR','SLC NAND'],products:['25Q NOR','LPDDR3 1Gb','SLC NAND'],notes:'边缘 SoC 配套存储主力。'},
+  {id:'Kioxia',name:'铠侍 Kioxia',layer:'Memory',region:'日本',hq:'东京',founded:2017,website:'kioxia.com',role:'NAND Flash / eMMC',capabilities:['3D NAND','BiCS','UFS','eMMC'],products:['BiCS NAND','UFS3.1','eMMC5.1'],notes:'原东芝存储。'},
+  {id:'YMTC',name:'长江存储 YMTC',layer:'Memory',region:'中国大陆',hq:'武汉',founded:2016,website:'ymtc.com',role:'国产 NAND Flash 龙头',capabilities:['Xtacking 3D NAND','UFS','eMMC','SSD 控制器'],products:['232 层 NAND','UFS3.1','PCIe SSD'],notes:'全球领先的 Xtacking 架构。'},
+  {id:'CXMT',name:'长鑫存储 CXMT',layer:'Memory',region:'中国大陆',hq:'合肥',founded:2016,website:'cxmt.com',role:'国产 DRAM 龙头',capabilities:['DDR4','LPDDR4X','DDR5','LPDDR5'],products:['DDR4 8G','LPDDR4X 12G','DDR5 16G'],notes:'中国大陆唯一量产 DRAM。'},
+  {id:'GigaDevice',name:'兆易创新 GigaDevice',layer:'Memory',region:'中国大陆',hq:'北京',founded:2005,website:'gigadevice.com',role:'NOR Flash / MCU / DRAM',capabilities:['NOR Flash','MCU (RISC-V/Cortex-M)','SLC NAND','DRAM'],products:['GD25 NOR','GD32 MCU','GD9F NAND'],notes:'A 股＀603986），与长鑫合作推 DDR。'},
+  {id:'Ingenic',name:'北京君正 Ingenic',layer:'Memory',region:'中国大陆',hq:'北京',founded:2005,website:'ingenic.com',role:'DRAM (收购 ISSI) + MCU',capabilities:['DRAM','SRAM','MCU','嵌入式 SoC'],products:['ISSI DDR3/4','君正 X1830 SoC'],notes:'A 股＀300223）。'},
+  {id:'Dosilicon',name:'东芯股份 Dosilicon',layer:'Memory',region:'中国大陆',hq:'上海',founded:2014,website:'dosilicon.com',role:'NAND/NOR/DRAM',capabilities:['SLC NAND','NOR','LPDDR'],products:['38nm SLC NAND','NOR Flash'],notes:'A 股＀688110）。'},
+  {id:'Longsys',name:'江波龙 Longsys',layer:'Memory',region:'中国大陆',hq:'深圳',founded:1999,website:'longsys.com',role:'成品存储（eMMC/UFS/SSD）',capabilities:['eMMC','UFS','SSD','车规存储'],products:['FORESEE eMMC','UFS2.2','PCIe SSD'],notes:'A 股＀301308），收购 Lexar。'},
+
+  /* ====== Equipment 前道设备 ====== */
+  {id:'ASML',name:'ASML',layer:'Equipment',region:'荷兰',hq:'埃股霍芬',founded:1984,website:'asml.com',role:'EUV / DUV 光刻机',capabilities:['EUV','DUV','High-NA EUV'],products:['NXE:3800E','NXT:2050i','EXE:5000'],notes:'全球垄断 EUV。'},
+  {id:'AMAT',name:'应用材料 AMAT',layer:'Equipment',region:'美国',hq:'圣克拉拉',founded:1967,website:'appliedmaterials.com',role:'薄膜沉积 / 刷除',capabilities:['CVD','PVD','CMP','刷除'],products:['Endura','Producer','Reflexion CMP'],notes:''},
+  {id:'LamResearch',name:'Lam Research',layer:'Equipment',region:'美国',hq:'费蒙',founded:1980,website:'lamresearch.com',role:'刷除 / 薄膜',capabilities:['刷除','ALD','PECVD','清洗'],products:['Kiyo','Vector','Sense.i'],notes:''},
+  {id:'KLA',name:'KLA',layer:'Equipment',region:'美国',hq:'米尔皮达斯',founded:1975,website:'kla.com',role:'检测 / 量测',capabilities:['缺陷检测','量测','OCD','掩膌检测'],products:['2900-series','Voyager','Surfscan'],notes:''},
+  {id:'TEL',name:'东京电子 TEL',layer:'Equipment',region:'日本',hq:'东京',founded:1963,website:'tel.com',role:'涂胶 / 刷除 / 热处理',capabilities:['涂胶显影','刷除','薄膜','热处理'],products:['CLEAN TRACK','Telius','Trias'],notes:''},
+  {id:'NAURA',name:'北方华创 NAURA',layer:'Equipment',region:'中国大陆',hq:'北京',founded:2001,website:'naura.com',role:'国产设备龙头',capabilities:['刷除','PVD','CVD','热处理','清洗'],products:['NMC 刷除','iTops PVD','HORIS 清洗'],notes:'A 股＀002371）。'},
+  {id:'AMEC',name:'中微公司 AMEC',layer:'Equipment',region:'中国大陆',hq:'上海',founded:2004,website:'amec-inc.com',role:'国产刷除设备',capabilities:['CCP 刷除','ICP 刷除','MOCVD'],products:['Primo SSC','Primo D-RIE','Prismo MOCVD'],notes:'A 股＀688012）。'},
+  {id:'ACMR',name:'盛美上海 ACM Research',layer:'Equipment',region:'中国大陆',hq:'上海',founded:1998,website:'acmrcsh.com',role:'清洗 / 镀铜',capabilities:['清洗 (SAPS/TEBO)','ECP 镀铜','活叜'],products:['Ultra C SAPS','Ultra ECP','Ultra Furnace'],notes:'A 股＀688082）。'},
+  {id:'Hwatsing',name:'华海清科 Hwatsing',layer:'Equipment',region:'中国大陆',hq:'北京',founded:2013,website:'hwatsing.com',role:'CMP 设备',capabilities:['CMP','减薄','后道设备'],products:['Universal-300 CMP','Universal-300 H'],notes:'A 股＀688120）。'},
+  {id:'SMEE',name:'上海微电子 SMEE',layer:'Equipment',region:'中国大陆',hq:'上海',founded:2002,website:'smee.com.cn',role:'国产光刻机',capabilities:['DUV 光刻机','面板光刻机'],products:['SSA600','SSA800','SSA/800-10W'],notes:'未上市，战略能量。'},
+  {id:'ZHCIM',name:'精测电子 ZHCIM',layer:'Equipment',region:'中国大陆',hq:'武汉',founded:2006,website:'zh-cim.com',role:'量测 / 面板 检测',capabilities:['面板检测','半导体量测','OLED 检测'],products:['AOI','OCD','模拟'],notes:'A 股＀300567）。'},
+  {id:'Piotech',name:'拓荆科技 Piotech',layer:'Equipment',region:'中国大陆',hq:'沈阳',founded:2010,website:'piotech.com',role:'PECVD / ALD',capabilities:['PECVD','SACVD','HARP','ALD'],products:['PF-300T','TF-300T','PE-ALD'],notes:'A 股＀688072）。'},
+  {id:'Mattson',name:'屹唐股份 Mattson',layer:'Equipment',region:'中国大陆',hq:'北京',founded:1989,website:'mattson.com',role:'去胶 / 热处理',capabilities:['去胶','快热退火','干法刷除'],products:['Helios','Suprema'],notes:'A 股＀688729）。'},
+
+  /* ====== Fabless 边缘 SoC 产品商 ====== */
+  {id:'Rockchip',name:'瑞芯微电子 Rockchip',layer:'Fabless',region:'中国大陆',hq:'福州',founded:2001,website:'rock-chips.com',role:'边缘 SoC / AIoT 头部',
+   capabilities:['多媒体 SoC','AIoT SoC','车载产品','RKNN AI 框架'],
+   products:['RK3566/RK3568','RK3576/RK3588','RK3308 语音','RV1126 IPC'],
+   notes:'本页主要对标厨。'},
+  {id:'Allwinner',name:'全志科技 Allwinner',layer:'Fabless',region:'中国大陆',hq:'珠海',founded:2007,website:'allwinnertech.com',role:'平板 / 边缘 SoC',
+   capabilities:['Linux SoC','RTOS SoC','语音 / 视频 / IPC'],
+   products:['T527','A523','V853','H618','D1 (RISC-V)'],
+   notes:'A 股＀300458）。'},
+  {id:'Sigmastar',name:'星宇股份 Sigmastar',layer:'Fabless',region:'中国台湾/厦门',hq:'厦门',founded:2017,website:'sigmastar.com.tw',role:'IPC / 智能仪表 SoC',
+   capabilities:['IPC SoC 集成 DDR','智能门钟','智能屏','车载'],
+   products:['SSD202D (集成 64MB DDR)','SSC30KQ','SSD20X'],
+   notes:'原 MStar IPC 事业独立的公司。'},
+  {id:'Axera',name:'爱芯元智 Axera',layer:'Fabless',region:'中国大陆',hq:'上海',founded:2019,website:'axera-tech.com',role:'智能视觉 / 边缘 AI SoC',
+   capabilities:['NPU','ISP','车规 AI'],
+   products:['AX620E','AX650N','AX8850 车规'],
+   notes:''},
+  {id:'Sophgo',name:'算能科技 Sophgo',layer:'Fabless',region:'中国大陆',hq:'北京',founded:2017,website:'sophgo.com',role:'边缘 / 云 AI 加速',
+   capabilities:['TPU','RISC-V CPU','SDK BMNN'],
+   products:['BM1684X','BM1688','SG2042 (RISC-V)'],
+   notes:'原 Bitmain AI 事业部。'},
+  {id:'Horizon',name:'地平线 Horizon',layer:'Fabless',region:'中国大陆',hq:'北京',founded:2015,website:'horizon.cc',role:'车规 AI SoC',capabilities:['BPU','车规 AI','ADAS'],products:['征程 3','征程 5','征程 6'],notes:''},
+  {id:'Cambricon',name:'寒武纪 Cambricon',layer:'Fabless',region:'中国大陆',hq:'北京',founded:2016,website:'cambricon.com',role:'AI 加速芯片',capabilities:['MLU','边缘 AI','云端 AI'],products:['MLU370','MLU290','思元 220'],notes:'A 股＀688256）。'},
+  {id:'Amlogic',name:'晶晨股份 Amlogic',layer:'Fabless',region:'中国大陆',hq:'上海',founded:1995,website:'amlogic.com',role:'机顶盒 / 智能屏 SoC',capabilities:['机顶盒 SoC','智能屏 SoC','语音 SoC'],products:['S905X4','S928X','A311D'],notes:'A 股＀688099）。'},
+  {id:'Unisoc',name:'紫光展锐 Unisoc',layer:'Fabless',region:'中国大陆',hq:'上海',founded:2001,website:'unisoc.com',role:'手机 / IoT / 边缘 SoC',capabilities:['5G 基带','LTE Cat-1/4','Wi-Fi/BT','平板 SoC'],products:['T606/T616','T820 5G','UWB510'],notes:''},
+  {id:'HiSilicon',name:'华为海思 HiSilicon',layer:'Fabless',region:'中国大陆',hq:'深圳',founded:2004,website:'hisilicon.com',role:'高端 SoC / IPC / 路由',capabilities:['手机 SoC (麦芒)','IPC SoC','路由 SoC','车规'],products:['昆鹏 920','Hi3559A IPC','Hi3798M'],notes:'机载 HarmonyOS 。'}
+];
+
+const TARGET_CHIPS = {
+  'RK3566':{name:'RK3566',vendor:'Rockchip',node:'22nm ULL',dieAreaMm2:60,waferPriceUsd:2500,d0:0.15,
+    maskSetUsd:1.5e6,pkgUsd:0.6,testUsd:0.3,royaltyUsd:0.3,overheadPct:12,annualVolume:8e6,
+    pkg:'LFBGA',
+    blurb:'4×Cortex-A55 · Mali-G52 · 0.8 TOPS NPU · 4K 视频。中低端 AIoT / 平板 / 盒子常用。'},
+  'RK3568':{name:'RK3568',vendor:'Rockchip',node:'22nm ULL',dieAreaMm2:75,waferPriceUsd:2500,d0:0.15,
+    maskSetUsd:1.5e6,pkgUsd:0.7,testUsd:0.4,royaltyUsd:0.4,overheadPct:13,annualVolume:6e6,
+    pkg:'LFBGA',
+    blurb:'4×Cortex-A55 · Mali-G52 · 0.8 TOPS NPU · 工控友好。NVR / 轻量边缘。'},
+  'RK3576':{name:'RK3576',vendor:'Rockchip',node:'8nm LPP',dieAreaMm2:80,waferPriceUsd:6500,d0:0.12,
+    maskSetUsd:10e6,pkgUsd:1.6,testUsd:0.8,royaltyUsd:1.0,overheadPct:14,annualVolume:3e6,
+    pkg:'FCBGA',
+    blurb:'4×A72+4×A53 · 6 TOPS NPU。介于 RK3568 与 RK3588 之间的中高端。'},
+  'RK3588':{name:'RK3588',vendor:'Rockchip',node:'8nm LPP',dieAreaMm2:110,waferPriceUsd:6500,d0:0.10,
+    maskSetUsd:12e6,pkgUsd:2.5,testUsd:1.2,royaltyUsd:1.5,overheadPct:15,annualVolume:3e6,
+    pkg:'FCBGA',
+    blurb:'4×A76+4×A55 · Mali-G610 · 6 TOPS NPU · 8K。高端边缘 AI / NAS / 工控机。'},
+  'T527':{name:'全志 T527',vendor:'Allwinner',node:'22nm',dieAreaMm2:70,waferPriceUsd:2500,d0:0.15,
+    maskSetUsd:1.4e6,pkgUsd:0.7,testUsd:0.4,royaltyUsd:0.4,overheadPct:13,annualVolume:5e6,
+    pkg:'FCBGA',
+    blurb:'8×A55 · G57 · 2 TOPS NPU。智能车载 / 平板 / 边缘产品线。'},
+  'V853':{name:'全志 V853',vendor:'Allwinner',node:'22nm',dieAreaMm2:30,waferPriceUsd:2500,d0:0.18,
+    maskSetUsd:1.0e6,pkgUsd:0.4,testUsd:0.25,royaltyUsd:0.2,overheadPct:12,annualVolume:6e6,
+    pkg:'LFBGA',
+    blurb:'1×A7 + RISC-V · 1 TOPS NPU · 智能摄像头/门铃/可视门鐵。'},
+  'SSD202D':{name:'Sigmastar SSD202D',vendor:'Sigmastar',node:'28nm',dieAreaMm2:40,waferPriceUsd:2300,d0:0.18,
+    maskSetUsd:1.2e6,pkgUsd:0.45,testUsd:0.3,royaltyUsd:0.25,overheadPct:12,annualVolume:8e6,
+    pkg:'LFBGA / SiP',
+    blurb:'2×A7 · 集成 64MB DDR3 · 高性价比。小屏产品、门铃、工控面板。'},
+  'AX620E':{name:'爱芯元智 AX620E',vendor:'Axera',node:'12nm',dieAreaMm2:55,waferPriceUsd:4500,d0:0.12,
+    maskSetUsd:5e6,pkgUsd:1.2,testUsd:0.6,royaltyUsd:0.8,overheadPct:14,annualVolume:2e6,
+    pkg:'FCBGA',
+    blurb:'2×A53 · 高算力 NPU。IPC / AI 边缘推理。'},
+  'BM1684X':{name:'算能 BM1684X',vendor:'Bitmain/Sophgo',node:'12nm',dieAreaMm2:160,waferPriceUsd:4500,d0:0.12,
+    maskSetUsd:6e6,pkgUsd:3.0,testUsd:1.5,royaltyUsd:1.5,overheadPct:15,annualVolume:0.8e6,
+    pkg:'FCBGA',
+    blurb:'8×A53 · 32 TOPS。面向边缘 AI 服务器 / 智能盒。'}
+};
+
+const GLOSSARY = [
+  {term:'ASP',def:'Average Selling Price，平均售价。ASP − Unit Cost = 毛利。'},
+  {term:'ATE',def:'Automated Test Equipment，自动测试机，如 Teradyne UltraFLEX、Advantest V93000。'},
+  {term:'BOM',def:'Bill of Materials，物料清单。在系统层面，芯片是 BOM 中的一行。'},
+  {term:'CP',def:'Circuit Probe，晶圆级测试，用探针卡在未切割晶圆上初筛。'},
+  {term:'D0',def:'Defect Density，缺陷密度，单位 defects/cm²，是良率模型关键参数。'},
+  {term:'DPW',def:'Die Per Wafer，每片晶圆可切出的 Die 数。'},
+  {term:'FCBGA',def:'Flip-Chip Ball Grid Array，倒装球栅阵列，高端 SoC 常用封装。'},
+  {term:'FT',def:'Final Test，封装后的终测。'},
+  {term:'KGD',def:'Known Good Die，经过测试确认良好的裸片，常用于 SiP/Chiplet。'},
+  {term:'NRE',def:'Non-Recurring Engineering，一次性工程投入，需按销量摊销。'},
+  {term:'OSAT',def:'Outsourced Semiconductor Assembly and Test，专业封测代工厂，如 ASE、Amkor。'},
+  {term:'Reticle',def:'光罩、掩膜版。全套 Mask Set 在 8nm 约 10–15M USD。'},
+  {term:'SLT',def:'System Level Test，系统级测试，在接近真实负载下筛选。'},
+  {term:'Tape-out',def:'流片，把最终 GDSII 交给代工厂制作掩膜开始量产。'},
+  {term:'Yield',def:'良率 = 好 Die / 总 Die。Murphy 模型常用。'},
+  {term:'Wafer bank',def:'晶圆银行，已完成前道但未封装的晶圆库存，用来缩短交期。'}
+];
+
+/* ========== 2. STATE ========== */
+const STATE = {
+  tab:'overview',
+  chip:'RK3566',
+  itemFilterDomain:'',
+  itemFilterPhase:'',
+  supplierFilterLayer:'',
+  supplierFilterRegion:'',
+  calc:null // init after load
+};
+
+/* ========== 2b. STORAGE / CRUD ========== */
+const STORAGE_KEY = 'chip-cost-edits-v1';
+function loadEdits(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{};}catch(e){return {};}
+}
+function saveAll(){
+  const data = {DOMAINS,COST_ITEMS,SUPPLIERS,TARGET_CHIPS,GLOSSARY,PACKAGE_FORMATS,WAFER_PRICES};
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  toast('已保存到本地。');
+}
+function applyEdits(){
+  const e = loadEdits();
+  if(!e||!Object.keys(e).length) return;
+  // 覆盖同 id 项，补充新增项
+  const merge=(arr,patches,idKey='id')=>{
+    if(!patches) return;
+    const map = new Map(arr.map(o=>[o[idKey],o]));
+    patches.forEach(p=>map.set(p[idKey],p));
+    arr.length=0; map.forEach(v=>arr.push(v));
+  };
+  merge(DOMAINS,e.DOMAINS);
+  merge(COST_ITEMS,e.COST_ITEMS);
+  merge(SUPPLIERS,e.SUPPLIERS);
+  merge(GLOSSARY,e.GLOSSARY,'term');
+  merge(PACKAGE_FORMATS,e.PACKAGE_FORMATS);
+  if(e.WAFER_PRICES){WAFER_PRICES.length=0;e.WAFER_PRICES.forEach(r=>WAFER_PRICES.push(r));}
+  if(e.TARGET_CHIPS){Object.keys(e.TARGET_CHIPS).forEach(k=>TARGET_CHIPS[k]=e.TARGET_CHIPS[k]);
+    // 允许删除 - 如果保存记录中某 chip 被删，则在运行时从默认中移除
+    const removed = e.__removedChips||[];
+    removed.forEach(id=>delete TARGET_CHIPS[id]);
+  }
+}
+function resetAll(){
+  if(!confirm('确定要全部恢复默认数据吗？该操作不可撤销。')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+/* 通用编辑器 */
+const SCHEMA = {
+  domain:{title:'成本域',idKey:'id',fields:[
+    {k:'id',l:'代号（D1–D9）',req:true},
+    {k:'name',l:'名称',req:true},
+    {k:'pct[0]',l:'RK3566 默认占比 %',type:'number'},
+    {k:'pct[1]',l:'RK3588 默认占比 %',type:'number'},
+    {k:'drivers',l:'驱动因素'},
+    {k:'description',l:'描述',type:'textarea'}
+  ]},
+  item:{title:'成本项',idKey:'id',fields:[
+    {k:'id',l:'代号（唯一）',req:true},
+    {k:'name',l:'名称',req:true},
+    {k:'domainId',l:'所属域',type:'select',opts:()=>DOMAINS.map(d=>({v:d.id,l:`${d.id} ${d.name}`}))},
+    {k:'phase',l:'阶段'},
+    {k:'type',l:'性质（NRE/Recurring/Optional）'},
+    {k:'drivers',l:'驱动因素'},
+    {k:'range',l:'典型区间'},
+    {k:'description',l:'描述',type:'textarea'},
+    {k:'supplierIds',l:'相关供应商ID（逗号分隔）',type:'csv'}
+  ]},
+  supplier:{title:'供应商',idKey:'id',fields:[
+    {k:'id',l:'代号（唯一）',req:true},
+    {k:'name',l:'名称',req:true},
+    {k:'layer',l:'环节（IP/EDA/Foundry/Mask/Wafer/OSAT/Substrate/ATE/Memory/Equipment/Fabless）',req:true},
+    {k:'region',l:'地区'},
+    {k:'hq',l:'总部城市'},
+    {k:'founded',l:'成立年',type:'number'},
+    {k:'website',l:'官网（不含 http）'},
+    {k:'role',l:'主要角色一句话'},
+    {k:'capabilities',l:'能力清单（逗号分隔）',type:'csv'},
+    {k:'products',l:'代表产品/型号（逗号分隔）',type:'csv'},
+    {k:'notes',l:'备注',type:'textarea'}
+  ]},
+  chip:{title:'对标芯片',idKey:'name',fields:[
+    {k:'name',l:'型号名（唯一）',req:true},
+    {k:'vendor',l:'厂商'},
+    {k:'node',l:'工艺节点'},
+    {k:'pkg',l:'封装形式'},
+    {k:'dieAreaMm2',l:'Die 面积 mm²',type:'number'},
+    {k:'waferPriceUsd',l:'晶圆单价 USD',type:'number'},
+    {k:'d0',l:'缺陷密度 D0',type:'number'},
+    {k:'maskSetUsd',l:'掩膜版 USD',type:'number'},
+    {k:'pkgUsd',l:'封装单价 USD',type:'number'},
+    {k:'testUsd',l:'测试单价 USD',type:'number'},
+    {k:'royaltyUsd',l:'IP版税 USD',type:'number'},
+    {k:'overheadPct',l:'Overhead %',type:'number'},
+    {k:'annualVolume',l:'年销量',type:'number'},
+    {k:'blurb',l:'一句话介绍',type:'textarea'}
+  ]},
+  glossary:{title:'术语',idKey:'term',fields:[
+    {k:'term',l:'术语',req:true},
+    {k:'def',l:'释义',type:'textarea',req:true}
+  ]},
+  pkg:{title:'封装形式',idKey:'id',fields:[
+    {k:'id',l:'代号',req:true},
+    {k:'name',l:'名称',req:true},
+    {k:'fullName',l:'全名'},
+    {k:'pinRange',l:'引脚范围'},
+    {k:'costRange',l:'成本区间'},
+    {k:'useCase',l:'典型场景'},
+    {k:'suppliers',l:'供应商'}
+  ]},
+  wafer:{title:'晶圆价格行',idKey:'node',fields:[
+    {k:'node',l:'工艺节点',req:true},
+    {k:'TSMC',l:'TSMC USD/片',type:'number'},
+    {k:'Samsung',l:'三星 USD/片',type:'number'},
+    {k:'SMIC',l:'中芯国际 USD/片',type:'number'},
+    {k:'UMC',l:'联电 USD/片',type:'number'},
+    {k:'GF',l:'GF USD/片',type:'number'},
+    {k:'Intel',l:'Intel Foundry USD/片',type:'number'},
+    {k:'HHGrace',l:'华虹宏力 USD/片',type:'number'},
+    {k:'NexChip',l:'晶合集成 USD/片',type:'number'}
+  ]}
+};
+function getCollection(type){
+  return ({domain:DOMAINS,item:COST_ITEMS,supplier:SUPPLIERS,glossary:GLOSSARY,pkg:PACKAGE_FORMATS,wafer:WAFER_PRICES})[type];
+}
+function getRecord(type,id){
+  if(type==='chip') return TARGET_CHIPS[id];
+  const arr = getCollection(type); if(!arr) return null;
+  const sc = SCHEMA[type];
+  return arr.find(o=>o[sc.idKey]===id);
+}
+function openEditor(type,record){
+  const sc = SCHEMA[type]; if(!sc) return;
+  const editing = !!record;
+  const draft = record?JSON.parse(JSON.stringify(record)):{};
+  // pct[0]/[1] 特殊处理
+  if(type==='domain'&&!draft.pct) draft.pct=[0,0];
+  $('#editTitle').textContent = (editing?'编辑':'新建')+' · '+sc.title;
+  const body = $('#editBody'); body.innerHTML='';
+  body.classList.add('calc-form');
+  sc.fields.forEach(f=>{
+    const lab = el('label',{},f.l+(f.req?' *':''));
+    let inp;
+    let cur = f.k.includes('[')? draft.pct[parseInt(f.k.match(/\[(\d)\]/)[1])] : draft[f.k];
+    if(f.type==='textarea'){
+      inp = el('textarea',{rows:3,style:'width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)'});
+      inp.value = cur||'';
+    } else if(f.type==='select'){
+      inp = el('select');
+      f.opts().forEach(o=>{const oe=el('option',{value:o.v},o.l); if(o.v===cur) oe.selected=true; inp.append(oe);});
+    } else if(f.type==='csv'){
+      inp = el('input',{type:'text',value:Array.isArray(cur)?cur.join(','):(cur||'')});
+    } else {
+      inp = el('input',{type:f.type==='number'?'number':'text',step:'any',value:cur??''});
+    }
+    inp.dataset.k = f.k; inp.dataset.t = f.type||'text';
+    body.append(lab,inp);
+  });
+  $('#editSave').onclick = ()=>{
+    const obj = editing?record:{};
+    body.querySelectorAll('[data-k]').forEach(el2=>{
+      const k = el2.dataset.k, t = el2.dataset.t;
+      let v = el2.value;
+      if(t==='number') v = v===''?null:parseFloat(v);
+      else if(t==='csv') v = v?v.split(',').map(s=>s.trim()).filter(Boolean):[];
+      if(k.includes('[')){
+        const i = parseInt(k.match(/\[(\d)\]/)[1]);
+        if(!obj.pct) obj.pct=[0,0];
+        obj.pct[i] = v||0;
+      } else { obj[k] = v; }
+    });
+    if(!editing){
+      if(type==='chip'){
+        if(!obj.name){alert('型号名不能为空');return;}
+        TARGET_CHIPS[obj.name]=obj;
+      } else {
+        const arr = getCollection(type), idKey=sc.idKey;
+        if(!obj[idKey]){alert(idKey+' 不能为空');return;}
+        if(arr.find(o=>o[idKey]===obj[idKey])){alert('已存在相同 '+idKey);return;}
+        arr.push(obj);
+      }
+    }
+    saveAll(); closeEditor(); buildChipPicker(); render();
+  };
+  $('#editModal').classList.add('show');
+}
+function closeEditor(){$('#editModal').classList.remove('show');}
+function deleteRecord(type,id){
+  if(!confirm('确定删除吗？')) return;
+  if(type==='chip'){
+    delete TARGET_CHIPS[id];
+    const e = loadEdits(); e.__removedChips=(e.__removedChips||[]).concat(id); localStorage.setItem(STORAGE_KEY,JSON.stringify(e));
+    if(STATE.chip===id) STATE.chip = Object.keys(TARGET_CHIPS)[0];
+  } else {
+    const arr = getCollection(type), sc = SCHEMA[type];
+    const i = arr.findIndex(o=>o[sc.idKey]===id);
+    if(i>=0) arr.splice(i,1);
+  }
+  saveAll(); buildChipPicker(); render();
+}
+function toast(msg){
+  let t = $('#toast');
+  if(!t){t=el('div',{id:'toast',style:'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:12px;z-index:99;opacity:0;transition:opacity .25s'});document.body.append(t);}
+  t.textContent = msg; t.style.opacity='1';
+  clearTimeout(t._h); t._h=setTimeout(()=>t.style.opacity='0',1400);
+}
+function buildChipPicker(){
+  const box = $('#chipPicker'); box.innerHTML='';
+  Object.keys(TARGET_CHIPS).forEach(id=>{
+    const b = el('button',{'data-chip':id,onclick:()=>setChip(id)},id);
+    if(STATE.chip===id) b.classList.add('active');
+    box.append(b);
+  });
+}
+
+/* ========== 3. UTILS ========== */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const fmt = (n,d=2) => (n==null||isNaN(n))?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});
+const fmtInt = n => (n==null||isNaN(n))?'—':Math.round(n).toLocaleString('en-US');
+const fmtUsd = n => '$ '+fmt(n);
+const domainOf = id => DOMAINS.find(d=>d.id===id);
+const supplierOf = id => SUPPLIERS.find(s=>s.id===id);
+const itemsByDomain = id => COST_ITEMS.filter(i=>i.domainId===id);
+// 把 9 颗芯片粗分成两类，对应 DOMAINS.pct 的 [0]/[1] 列
+// 0 = 22/28/40nm 成熟工艺；1 = 12nm 及以下先进工艺
+function chipIdx(chipId){
+  const c = TARGET_CHIPS[chipId]; if(!c) return 0;
+  return /(?:^|[^0-9])(3|4|5|6|7|8|10|12|14|16)nm/.test(String(c.node))?1:0;
+}
+
+/* ========== 4. FORMULAS ========== */
+function computeDPW(dieAreaMm2, waferDiamMm=300){
+  const S = dieAreaMm2, D = waferDiamMm;
+  return Math.PI*Math.pow(D/2,2)/S - Math.PI*D/Math.sqrt(2*S);
+}
+function computeYield(dieAreaMm2, d0PerCm2){
+  const A = dieAreaMm2/100; // mm² -> cm²
+  const x = A*d0PerCm2;
+  if(x<=0) return 1;
+  return Math.pow((1-Math.exp(-x))/x,2);
+}
+function computeUnitCost(p){
+  const dpw = computeDPW(p.dieAreaMm2);
+  const y = computeYield(p.dieAreaMm2, p.d0);
+  const gdw = dpw*y;
+  const dieCost = p.waferPriceUsd/gdw;
+  const nrePerUnit = p.maskSetUsd/p.annualVolume;
+  const base = dieCost + p.pkgUsd + p.testUsd + p.royaltyUsd + nrePerUnit;
+  const unit = base*(1+p.overheadPct/100);
+  return {dpw,y,gdw,dieCost,nrePerUnit,base,unit};
+}
+
+/* ========== 5. ROUTING ========== */
+function setTab(tab){
+  STATE.tab = tab;
+  $$('nav.side a').forEach(a=>a.classList.toggle('active',a.dataset.tab===tab));
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function setChip(chip){
+  STATE.chip = chip;
+  $$('#chipPicker button').forEach(b=>b.classList.toggle('active',b.dataset.chip===chip));
+  STATE.calc = {...TARGET_CHIPS[chip]};
+  render();
+}
+
+/* ========== 6. RENDER ========== */
+function render(){
+  const m = $('#main');
+  m.innerHTML = '';
+  switch(STATE.tab){
+    case 'overview': m.append(renderOverview()); break;
+    case 'domains':  m.append(renderDomains()); break;
+    case 'items':    m.append(renderItems()); break;
+    case 'suppliers':m.append(renderSuppliers()); break;
+    case 'calc':     m.append(renderCalc()); break;
+    case 'formulas': m.append(renderFormulas()); break;
+    case 'glossary': m.append(renderGlossary()); break;
+    case 'packages': m.append(renderPackages()); break;
+    case 'wafer':    m.append(renderWafer()); break;
+    case 'chips':    m.append(renderChips()); break;
+  }
+}
+
+function el(tag, attrs={}, children=[]){
+  const e = document.createElement(tag);
+  Object.entries(attrs).forEach(([k,v])=>{
+    if(k==='class') e.className=v;
+    else if(k==='html') e.innerHTML=v;
+    else if(k.startsWith('on')) e.addEventListener(k.slice(2),v);
+    else e.setAttribute(k,v);
+  });
+  (Array.isArray(children)?children:[children]).forEach(c=>{
+    if(c==null) return;
+    e.append(c.nodeType?c:document.createTextNode(c));
+  });
+  return e;
+}
+</script>
+<script>
+/* ========== 7. RENDER: OVERVIEW (L1) ========== */
+function renderOverview(){
+  const chip = TARGET_CHIPS[STATE.chip];
+  const r = computeUnitCost(chip);
+  const wrap = el('div');
+  wrap.append(el('div',{class:'breadcrumb'},'L1 · 战略层'));
+  wrap.append(el('h1',{},'总览：一颗芯片的钱花在哪'));
+  wrap.append(el('div',{class:'sub'},`当前对标：${chip.name}（${chip.node} · ${chip.pkg||'-'}） · ${chip.blurb}`));
+
+  // 高亮叠加：最大成本域
+  const idx = chipIdx(STATE.chip);
+  const sorted = [...DOMAINS].sort((a,b)=>b.pct[idx]-a.pct[idx]);
+  const top = sorted[0];
+  const hl = el('div',{class:'highlight-box'});
+  hl.append(el('div',{},[el('span',{class:'tag '+top.id.toLowerCase()},top.id),' 最大占比成本域']));
+  hl.append(el('div',{class:'num'},top.pct[idx]+' %'));
+  hl.append(el('div',{class:'sub'},`${top.name} · 驱动：${top.drivers}`));
+  hl.append(el('div',{class:'hint',style:'margin-top:6px'},'重点关注该域的成本驱动项，边际收益最大。'));
+  wrap.append(hl);
+
+  // Pyramid SVG
+  const pyr = el('div',{class:'card',style:'margin-top:14px'});
+  pyr.append(el('h3',{},'金字塔全景 · 从战略到供给'));
+  pyr.append(el('div',{class:'hint'},'点击任一层，跳到对应视图。'));
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS,'svg');
+  svg.setAttribute('viewBox','0 0 600 320');
+  svg.setAttribute('width','100%'); svg.setAttribute('height','320');
+  const tiers = [
+    {y:20,  w:180, label:'L1 产品级总成本 / ASP', tab:'overview', fill:'#7c3aed'},
+    {y:90,  w:320, label:'L2 五大成本域', tab:'domains', fill:'#2f6feb'},
+    {y:160, w:460, label:'L3 约 25 个成本项', tab:'items', fill:'#10b981'},
+    {y:230, w:560, label:'L4 供应商 + 计算公式', tab:'suppliers', fill:'#f59e0b'}
+  ];
+  tiers.forEach((t,i)=>{
+    const x = (600-t.w)/2;
+    const g = document.createElementNS(svgNS,'g');
+    g.classList.add('pyramid-tier');
+    g.addEventListener('click',()=>setTab(t.tab));
+    const r2 = document.createElementNS(svgNS,'rect');
+    r2.setAttribute('x',x); r2.setAttribute('y',t.y); r2.setAttribute('width',t.w); r2.setAttribute('height',54);
+    r2.setAttribute('rx',10); r2.setAttribute('fill',t.fill); r2.setAttribute('opacity',0.85-i*0.08);
+    const tx = document.createElementNS(svgNS,'text');
+    tx.setAttribute('x',300); tx.setAttribute('y',t.y+32); tx.setAttribute('text-anchor','middle');
+    tx.setAttribute('fill','#fff'); tx.setAttribute('font-size','14'); tx.setAttribute('font-weight','600');
+    tx.textContent = t.label;
+    g.append(r2,tx); svg.append(g);
+  });
+  pyr.append(svg);
+  wrap.append(pyr);
+
+  // KPI
+  const kpis = el('div',{class:'grid cols-3',style:'margin-top:14px'});
+  kpis.append(kpi('单颗出厂成本 (USD)',fmt(r.unit),'Die + Pkg + Test + IP + NRE/销量 + Overhead'));
+  kpis.append(kpi('裸片单成本',fmt(r.dieCost),`DPW ${fmtInt(r.dpw)} · Yield ${fmt(r.y*100,1)}%`));
+  kpis.append(kpi('NRE 单颗摊销',fmt(r.nrePerUnit,3),`掩膜 $${fmt(chip.maskSetUsd/1e6,1)}M ÷ ${fmtInt(chip.annualVolume)}`));
+  wrap.append(kpis);
+
+  // 五大域 highlight 条 + 占比饼图
+  const split = el('div',{class:'grid cols-2',style:'margin-top:14px'});
+  const left = el('div',{class:'card'});
+  left.append(el('h3',{},'五大成本域 · 占比 highlight'));
+  left.append(el('div',{class:'hint'},'按当前对标芯片的教学默认占比。'));
+  sorted.forEach(d=>{
+    const row = el('div',{class:'pct-bar-row'});
+    row.append(el('div',{class:'lbl'},[el('span',{class:'tag '+d.id.toLowerCase()},d.id),' '+d.name.split('（')[0]]));
+    const b = el('div',{class:'bar2'}); b.append(el('span',{style:`width:${d.pct[idx]}%;background:${domColor(d.id)}`}));
+    row.append(b);
+    row.append(el('div',{class:'pct'},d.pct[idx]+'%'));
+    left.append(row);
+  });
+  split.append(left);
+
+  const right = el('div',{class:'card'});
+  right.append(el('h3',{},'L2 实际成本占比 · ' + STATE.chip));
+  // 用计算器计算出的实际占比
+  const overhead = r.unit - r.base;
+  const slices = [
+    {label:'D1 Die',value:r.dieCost,color:domColor('D1')},
+    {label:'D2 Package',value:chip.pkgUsd,color:domColor('D2')},
+    {label:'D3 Test',value:chip.testUsd,color:domColor('D3')},
+    {label:'D4 NRE',value:r.nrePerUnit,color:domColor('D4')},
+    {label:'D5 IP+Overhead',value:chip.royaltyUsd+overhead,color:domColor('D5')}
+  ];
+  const total = slices.reduce((a,s)=>a+s.value,0);
+  right.append(makePie(slices.map(s=>({...s,value:s.value/total*100}))));
+  right.append(makeLegend());
+  split.append(right);
+  wrap.append(split);
+
+  // RK3566 vs RK3588 叠片条
+  const barCard = el('div',{class:'card',style:'margin-top:14px'});
+  barCard.append(el('h3',{},'全部对标芯片 · 成本结构叠片条（点击切换）'));
+  barCard.append(makeStackedBars());
+  barCard.append(el('div',{class:'hint',style:'margin-top:8px'},'每条表示由公式计算的实际占比；同一款产品在不同工艺下 Die$ 占比会显著变化。点击行可切换到该芯片。'));
+  wrap.append(barCard);
+
+  // 晶圆价格预览
+  const wp = el('div',{class:'card',style:'margin-top:14px'});
+  wp.append(el('div',{style:'display:flex;justify-content:space-between;align-items:center'},
+    [el('h3',{style:'margin:0'},'晶圆价格快照 · 不同工艺×代工厂'),
+     el('a',{onclick:()=>setTab('wafer'),style:'cursor:pointer;color:var(--brand);font-size:12px'},'查看完整表 →')]));
+  const tbl = makeWaferPriceTable(true);
+  wp.append(tbl);
+  wrap.append(wp);
+
+  return wrap;
+}
+function makeWaferPriceTable(preview){
+  const rows = preview ? WAFER_PRICES.slice(0,5) : WAFER_PRICES;
+  const card = el('div',{style:'overflow:auto;margin-top:8px'});
+  const t = el('table',{class:'matrix-table'});
+  const head = '<thead><tr><th>工艺节点</th>'+WAFER_FOUNDRIES.map(f=>`<th>${WAFER_FOUNDRY_NAMES[f]}</th>`).join('')+(preview?'':'<th></th>')+'</tr></thead>';
+  t.innerHTML = head;
+  const tb = el('tbody');
+  rows.forEach(row=>{
+    const tr = el('tr');
+    tr.append(el('td',{},row.node));
+    WAFER_FOUNDRIES.forEach(f=>{
+      const v = row[f];
+      tr.append(el('td',{class:v==null?'empty':''},v==null?'—':'$ '+v.toLocaleString()));
+    });
+    if(!preview){
+      const td = el('td');
+      td.append(el('button',{class:'btn sm',onclick:e=>{e.stopPropagation();openEditor('wafer',row);}},'✎'));
+      td.append(el('button',{class:'btn sm danger',style:'margin-left:4px',onclick:e=>{e.stopPropagation();deleteRecord('wafer',row.node);}},'×'));
+      tr.append(td);
+    }
+    tb.append(tr);
+  });
+  t.append(tb);
+  card.append(t);
+  return card;
+}
+function kpi(label,val,hint){
+  const c = el('div',{class:'card kpi'});
+  c.append(el('div',{class:'label'},label));
+  c.append(el('div',{class:'val'},val));
+  if(hint) c.append(el('div',{class:'hint'},hint));
+  return c;
+}
+function domColor(id){return {D1:'#3b82f6',D2:'#10b981',D3:'#f59e0b',D4:'#ef4444',D5:'#8b5cf6'}[id];}
+function makeLegend(){
+  const lg = el('div',{class:'legend',style:'margin-top:8px'});
+  DOMAINS.forEach(d=>{
+    const i = el('span',{},[el('i',{style:`background:${domColor(d.id)}`}),d.name]);
+    lg.append(i);
+  });
+  return lg;
+}
+function makePie(slices){
+  const svgNS='http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS,'svg');
+  svg.setAttribute('viewBox','0 0 200 200');
+  svg.setAttribute('width','100%'); svg.setAttribute('height','220');
+  const total = slices.reduce((a,b)=>a+b.value,0);
+  let a0=-Math.PI/2;
+  slices.forEach(s=>{
+    const a1 = a0 + (s.value/total)*Math.PI*2;
+    const large = (a1-a0)>Math.PI?1:0;
+    const x0 = 100+80*Math.cos(a0), y0=100+80*Math.sin(a0);
+    const x1 = 100+80*Math.cos(a1), y1=100+80*Math.sin(a1);
+    const p = document.createElementNS(svgNS,'path');
+    p.setAttribute('d',`M100 100 L${x0} ${y0} A80 80 0 ${large} 1 ${x1} ${y1} Z`);
+    p.setAttribute('fill',s.color);
+    p.setAttribute('opacity',0.9);
+    const t = document.createElementNS(svgNS,'title');
+    t.textContent = `${s.label}: ${s.value}%`;
+    p.append(t);
+    svg.append(p);
+    a0 = a1;
+  });
+  const hole = document.createElementNS(svgNS,'circle');
+  hole.setAttribute('cx',100); hole.setAttribute('cy',100); hole.setAttribute('r',42);
+  hole.setAttribute('fill','var(--panel)');
+  svg.append(hole);
+  const t = document.createElementNS(svgNS,'text');
+  t.setAttribute('x',100); t.setAttribute('y',104); t.setAttribute('text-anchor','middle');
+  t.setAttribute('fill','currentColor'); t.setAttribute('font-size','13'); t.setAttribute('font-weight','600');
+  t.textContent = STATE.chip;
+  svg.append(t);
+  return svg;
+}
+function makeStackedBars(){
+  // 遍历所有对标芯片，显示其按计算器实际推导出的成本结构
+  const wrap = el('div');
+  Object.keys(TARGET_CHIPS).forEach(chipId=>{
+    const c = TARGET_CHIPS[chipId];
+    const r = computeUnitCost(c);
+    const overhead = r.unit - r.base;
+    const parts = [
+      {id:'D1',v:r.dieCost},
+      {id:'D2',v:c.pkgUsd},
+      {id:'D3',v:c.testUsd},
+      {id:'D4',v:r.nrePerUnit},
+      {id:'D5',v:c.royaltyUsd+overhead}
+    ];
+    const tot = parts.reduce((a,p)=>a+p.v,0)||1;
+    const row = el('div',{style:'margin:10px 0;cursor:pointer',onclick:()=>setChip(chipId)});
+    row.append(el('div',{class:'hint'},chipId+'  ·  '+(c.vendor||'')+'  ·  '+c.node+'  ·  $ '+fmt(r.unit,2)+' / 颗'));
+    const bar = el('div',{class:'bar'});
+    parts.forEach(p=>{
+      const pct = (p.v/tot)*100;
+      bar.append(el('span',{style:`flex:${pct};background:${domColor(p.id)}`,title:`${p.id} ${fmt(pct,1)}%`}));
+    });
+    row.append(bar);
+    wrap.append(row);
+  });
+  return wrap;
+}
+
+/* ========== 8. RENDER: DOMAINS (L2) ========== */
+function renderDomains(){
+  const wrap = el('div');
+  wrap.append(el('div',{class:'breadcrumb'},'L2 · 结构层'));
+  wrap.append(el('h1',{},'五大成本域（D1–D5）'));
+  wrap.append(el('div',{class:'sub'},'把任意一颗边缘 SoC 的出厂成本固定拆成 5 个域，便于教学与占比可视化。'));
+  const grid = el('div',{class:'grid cols-2',style:'margin-top:14px'});
+  DOMAINS.forEach(d=>{
+    const idx = chipIdx(STATE.chip);
+    const card = el('div',{class:'card',style:'cursor:pointer',onclick:()=>{STATE.itemFilterDomain=d.id;setTab('items');}});
+    card.append(el('div',{},[el('span',{class:'tag '+d.id.toLowerCase()},d.id),' ',el('b',{},d.name)]));
+    card.append(el('div',{class:'sub',style:'margin-top:4px'},d.description));
+    const bar = el('div',{class:'bar',style:'margin-top:10px'});
+    bar.append(el('span',{style:`flex:${d.pct[idx]};background:${domColor(d.id)}`}));
+    bar.append(el('span',{style:`flex:${100-d.pct[idx]};background:var(--chip)`}));
+    card.append(bar);
+    card.append(el('div',{class:'hint',style:'margin-top:6px'},`占比 ≈ ${d.pct[idx]}% · 驱动：${d.drivers}`));
+    card.append(el('div',{style:'margin-top:8px'},`明细 ${itemsByDomain(d.id).length} 项 →`));
+    grid.append(card);
+  });
+  wrap.append(grid);
+  return wrap;
+}
+
+/* ========== 9. RENDER: ITEMS (L3) ========== */
+function renderItems(){
+  const wrap = el('div');
+  wrap.append(el('div',{class:'breadcrumb'},'L3 · 明细层'));
+  wrap.append(el('h1',{},'成本明细项'));
+  wrap.append(el('div',{class:'sub'},'共 '+COST_ITEMS.length+' 项，挂在 5 个成本域下。点击行查看详情，右侧可增删改。'));
+
+  // Mindmap SVG
+  wrap.append(renderMindmap());
+
+  // toolbar: filters + add + reset
+  const toolbar = el('div',{class:'table-toolbar'});
+  const left = el('div',{class:'left'});
+  const selDom = el('select');
+  selDom.append(el('option',{value:''},'全部成本域'));
+  DOMAINS.forEach(d=>{
+    const o = el('option',{value:d.id},`${d.id} ${d.name}`);
+    if(STATE.itemFilterDomain===d.id) o.selected=true;
+    selDom.append(o);
+  });
+  selDom.addEventListener('change',()=>{STATE.itemFilterDomain=selDom.value;render();});
+  left.append(selDom);
+  const selPhase = el('select');
+  selPhase.append(el('option',{value:''},'全部阶段'));
+  [...new Set(COST_ITEMS.map(i=>i.phase))].forEach(p=>{
+    const o = el('option',{value:p},p);
+    if(STATE.itemFilterPhase===p) o.selected=true;
+    selPhase.append(o);
+  });
+  selPhase.addEventListener('change',()=>{STATE.itemFilterPhase=selPhase.value;render();});
+  left.append(selPhase);
+  toolbar.append(left);
+  const right = el('div',{class:'left'});
+  right.append(el('button',{class:'btn primary',onclick:()=>openEditor('item',null)},'+ 新增成本项'));
+  right.append(el('button',{class:'btn',onclick:()=>exportCSV('item')},'⬇ 导出 CSV'));
+  right.append(el('button',{class:'btn',onclick:()=>triggerImport('item')},'⬆ 导入 CSV'));
+  right.append(el('button',{class:'btn',onclick:resetAll},'恢复默认'));
+  toolbar.append(right);
+  wrap.append(toolbar);
+
+  const tbl = el('table');
+  tbl.innerHTML = '<thead><tr><th>成本项</th><th>所属域</th><th>阶段</th><th>性质</th><th>典型区间 / 驱动</th><th style="width:90px">操作</th></tr></thead>';
+  const tb = el('tbody');
+  COST_ITEMS
+    .filter(i=>!STATE.itemFilterDomain||i.domainId===STATE.itemFilterDomain)
+    .filter(i=>!STATE.itemFilterPhase||i.phase===STATE.itemFilterPhase)
+    .forEach(i=>{
+      const tr = el('tr',{onclick:()=>openItemDrawer(i)});
+      tr.append(el('td',{},[el('b',{},i.name),el('div',{class:'hint'},i.description.slice(0,46)+(i.description.length>46?'…':''))]));
+      const d = domainOf(i.domainId);
+      tr.append(el('td',{},el('span',{class:'tag '+(i.domainId||'').toLowerCase()},i.domainId+' '+(d?d.name.split('（')[0]:'?'))));
+      tr.append(el('td',{},i.phase));
+      tr.append(el('td',{},i.type));
+      tr.append(el('td',{},[el('div',{},i.range),el('div',{class:'hint'},i.drivers)]));
+      const ops = el('td');
+      ops.append(el('button',{class:'btn sm',onclick:e=>{e.stopPropagation();openEditor('item',i);}},'✎'));
+      ops.append(el('button',{class:'btn sm danger',style:'margin-left:4px',onclick:e=>{e.stopPropagation();deleteRecord('item',i.id);}},'×'));
+      tr.append(ops);
+      tb.append(tr);
+    });
+  tbl.append(tb);
+  const card = el('div',{class:'card',style:'padding:0;overflow:auto'}); card.append(tbl);
+  wrap.append(card);
+  return wrap;
+}
+function renderMindmap(){
+  const card = el('div',{class:'card',style:'margin:14px 0;overflow:auto'});
+  card.append(el('h3',{},'D1–D5 到成本项 · 结构化拆解'));
+  const svgNS='http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS,'svg');
+  const W=880,H=DOMAINS.length*80+20;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.setAttribute('width','100%'); svg.setAttribute('height',H);
+  DOMAINS.forEach((d,i)=>{
+    const y = i*80+50;
+    // Domain node
+    const g = document.createElementNS(svgNS,'g');
+    const rect = document.createElementNS(svgNS,'rect');
+    rect.setAttribute('x',10); rect.setAttribute('y',y-20); rect.setAttribute('width',200); rect.setAttribute('height',40);
+    rect.setAttribute('rx',8); rect.setAttribute('fill',domColor(d.id));
+    const t = document.createElementNS(svgNS,'text');
+    t.setAttribute('x',110); t.setAttribute('y',y+5); t.setAttribute('text-anchor','middle');
+    t.setAttribute('fill','#fff'); t.setAttribute('font-size','13'); t.setAttribute('font-weight','600');
+    t.textContent = d.id+' '+d.name.split('（')[0];
+    g.append(rect,t); svg.append(g);
+    // Items
+    const items = itemsByDomain(d.id);
+    items.forEach((it,j)=>{
+      const x = 270+(j%3)*200;
+      const yy = y + (j>=3?30:(j<=2?0:0)) - 0;
+      const gy = y - 20 + (j%2===0?-5:25);
+      // connector
+      const path = document.createElementNS(svgNS,'path');
+      path.setAttribute('d',`M210 ${y} C ${(210+x)/2} ${y}, ${(210+x)/2} ${gy+12}, ${x} ${gy+12}`);
+      path.setAttribute('stroke',domColor(d.id)); path.setAttribute('stroke-width','1.5'); path.setAttribute('fill','none'); path.setAttribute('opacity','.5');
+      svg.append(path);
+      const rr = document.createElementNS(svgNS,'rect');
+      rr.setAttribute('x',x); rr.setAttribute('y',gy); rr.setAttribute('width',180); rr.setAttribute('height',24);
+      rr.setAttribute('rx',6); rr.setAttribute('fill','var(--chip)'); rr.setAttribute('stroke',domColor(d.id)); rr.setAttribute('stroke-opacity','.4');
+      rr.style.cursor='pointer';
+      rr.addEventListener('click',()=>openItemDrawer(it));
+      const tt = document.createElementNS(svgNS,'text');
+      tt.setAttribute('x',x+10); tt.setAttribute('y',gy+16);
+      tt.setAttribute('fill','currentColor'); tt.setAttribute('font-size','11');
+      tt.textContent = it.name;
+      svg.append(rr,tt);
+    });
+  });
+  card.append(svg);
+  card.append(el('div',{class:'hint',style:'margin-top:6px'},'点击任意节点打开详情抽屉。'));
+  return card;
+}
+function openItemDrawer(item){
+  const body = $('#drawerBody'); body.innerHTML='';
+  const d = domainOf(item.domainId);
+  body.append(el('div',{class:'breadcrumb'},`L3 · ${item.domainId} ${d.name}`));
+  body.append(el('h3',{},item.name));
+  body.append(el('div',{class:'sub'},item.description));
+  const grid = el('div',{class:'grid cols-2',style:'margin-top:10px'});
+  grid.append(miniRow('阶段',item.phase));
+  grid.append(miniRow('性质',item.type));
+  body.append(grid);
+  body.append(el('h3',{style:'margin-top:14px'},'驱动因素'));
+  body.append(el('div',{},item.drivers));
+  body.append(el('h3',{style:'margin-top:14px'},'典型区间'));
+  body.append(el('div',{},item.range));
+  if(item.supplierIds&&item.supplierIds.length){
+    body.append(el('h3',{style:'margin-top:14px'},'相关供应商'));
+    const list = el('div',{class:'legend'});
+    item.supplierIds.forEach(sid=>{
+      const s = supplierOf(sid); if(!s) return;
+      const chip = el('a',{class:'tag',style:'cursor:pointer',onclick:()=>openSupplierDrawer(s)},s.name);
+      list.append(chip);
+    });
+    body.append(list);
+  }
+  showDrawer();
+}
+function miniRow(k,v){const c=el('div',{class:'card'});c.append(el('div',{class:'label hint'},k));c.append(el('div',{class:'val',style:'font-size:14px'},v));return c;}
+
+/* ========== 10. RENDER: SUPPLIERS (L4) ========== */
+function renderSuppliers(){
+  const wrap = el('div');
+  wrap.append(el('div',{class:'breadcrumb'},'L4 · 供给层'));
+  wrap.append(el('h1',{},'供应商地图'));
+  wrap.append(el('div',{class:'sub'},'共 '+SUPPLIERS.length+' 家，按环节分组。点击查看详情与其驱动的成本项。'));
+
+  // Layer pill tabs
+  const layers = ['全部',...new Set(SUPPLIERS.map(s=>s.layer))];
+  const layerNames = {IP:'IP 及设计服务',EDA:'EDA 工具','EDA/IP':'EDA + IP',Foundry:'晶圆代工',Mask:'光罩 / 掩膜版',Wafer:'原生硅片',OSAT:'封装测试（OSAT）',Substrate:'封装基板',ATE:'测试设备 ATE',Memory:'存储 DRAM/Flash',Equipment:'前道设备',Fabless:'Fabless（边缘 SoC 产品商）'};
+  const tabs = el('div',{class:'layer-tabs'});
+  layers.forEach(l=>{
+    const b = el('button',{onclick:()=>{STATE.supplierFilterLayer=l==='全部'?'':l;render();}},(layerNames[l]||l)+(l==='全部'?'':` (${SUPPLIERS.filter(s=>s.layer===l).length})`));
+    if((STATE.supplierFilterLayer||'全部')===l) b.classList.add('active');
+    tabs.append(b);
+  });
+  wrap.append(tabs);
+
+  // toolbar
+  const toolbar = el('div',{class:'table-toolbar'});
+  const lf = el('div',{class:'left'});
+  const selRegion = el('select');
+  selRegion.append(el('option',{value:''},'全部地区'));
+  [...new Set(SUPPLIERS.map(s=>s.region))].forEach(r=>{
+    const o = el('option',{value:r},r); if(STATE.supplierFilterRegion===r) o.selected=true; selRegion.append(o);
+  });
+  selRegion.addEventListener('change',()=>{STATE.supplierFilterRegion=selRegion.value;render();});
+  lf.append(selRegion);
+  toolbar.append(lf);
+  const rt = el('div',{class:'left'});
+  rt.append(el('button',{class:'btn primary',onclick:()=>openEditor('supplier',null)},'+ 新增供应商'));
+  rt.append(el('button',{class:'btn',onclick:()=>exportCSV('supplier')},'⬇ 导出 CSV'));
+  rt.append(el('button',{class:'btn',onclick:()=>triggerImport('supplier')},'⬆ 导入 CSV'));
+  toolbar.append(rt);
+  wrap.append(toolbar);
+
+  // Grouped cards
+  const filtered = SUPPLIERS
+    .filter(s=>!STATE.supplierFilterLayer||s.layer===STATE.supplierFilterLayer)
+    .filter(s=>!STATE.supplierFilterRegion||s.region===STATE.supplierFilterRegion);
+  const groups = {};
+  filtered.forEach(s=>{(groups[s.layer]=groups[s.layer]||[]).push(s);});
+  const orderedLayers = ['IP','EDA','EDA/IP','Foundry','Mask','Wafer','OSAT','Substrate','ATE','Memory','Equipment','Fabless'];
+  const present = [...orderedLayers,...Object.keys(groups).filter(l=>!orderedLayers.includes(l))];
+  present.forEach(layer=>{
+    if(!groups[layer]||!groups[layer].length) return;
+    const card = el('div',{class:'group-card'});
+    const head = el('div',{class:'group-head'});
+    head.append(el('h3',{},`${layerNames[layer]||layer} · ${groups[layer].length}`));
+    head.append(el('span',{class:'tag'},layer));
+    card.append(head);
+    const grid = el('div',{class:'supplier-grid'});
+    groups[layer].forEach(s=>{
+      const tile = el('div',{class:'supplier-tile',onclick:()=>openSupplierDrawer(s)});
+      tile.append(el('div',{class:'name'},s.name));
+      tile.append(el('div',{class:'role'},s.role||''));
+      const meta = el('div'); meta.append(el('span',{class:'region'},s.region||'—'));
+      tile.append(meta);
+      const ops = el('div',{class:'ops'});
+      ops.append(el('button',{class:'btn sm',onclick:e=>{e.stopPropagation();openEditor('supplier',s);}},'✎'));
+      ops.append(el('button',{class:'btn sm danger',onclick:e=>{e.stopPropagation();deleteRecord('supplier',s.id);}},'×'));
+      tile.append(ops);
+      grid.append(tile);
+    });
+    card.append(grid);
+    wrap.append(card);
+  });
+  return wrap;
+}
+function openSupplierDrawer(s){
+  const body = $('#drawerBody'); body.innerHTML='';
+  body.append(el('div',{class:'breadcrumb'},`L4 · ${s.layer}`));
+  body.append(el('h3',{},s.name));
+  body.append(el('div',{class:'sub'},s.role||''));
+
+  // 高亮信息条
+  const meta = el('div',{class:'grid cols-2',style:'margin-top:10px;gap:8px'});
+  meta.append(miniRow('环节',el('span',{class:'tag '+(s.layer||'').toLowerCase().replace(/[^a-z]/g,'')},s.layer||'—')));
+  meta.append(miniRow('地区',(s.region||'—')+(s.hq?' · '+s.hq:'')));
+  if(s.founded) meta.append(miniRow('成立年',s.founded+''));
+  if(s.website){
+    const a = el('a',{href:(s.website.startsWith('http')?s.website:'https://'+s.website),target:'_blank',style:'color:var(--brand);text-decoration:underline'},s.website);
+    meta.append(miniRow('官网',a));
+  }
+  body.append(meta);
+
+  // 能力清单
+  const caps = Array.isArray(s.capabilities)?s.capabilities:(s.capabilities?String(s.capabilities).split(/[,，]/):[]);
+  if(caps.length){
+    body.append(el('h3',{style:'margin-top:14px'},'能力清单'));
+    const lg = el('div',{class:'legend'});
+    caps.forEach(c=>lg.append(el('span',{class:'tag',style:'background:var(--chip);color:var(--ink)'},c.trim())));
+    body.append(lg);
+  }
+
+  // 代表产品/型号
+  const prods = Array.isArray(s.products)?s.products:(s.products?String(s.products).split(/[,，]/):[]);
+  if(prods.length){
+    body.append(el('h3',{style:'margin-top:14px'},'代表产品 / 型号'));
+    const ul = el('div',{style:'display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px'});
+    prods.forEach(p=>{
+      const it = el('div',{style:'padding:6px 8px;border:1px solid var(--line);border-radius:6px;font-size:12px'},p.trim());
+      ul.append(it);
+    });
+    body.append(ul);
+  }
+
+  if(s.notes){
+    body.append(el('h3',{style:'margin-top:14px'},'备注'));
+    body.append(el('div',{class:'sub'},s.notes));
+  }
+
+  // 驱动的成本项
+  const related = COST_ITEMS.filter(i=>i.supplierIds&&i.supplierIds.includes(s.id));
+  if(related.length){
+    body.append(el('h3',{style:'margin-top:14px'},'驱动的成本项'));
+    const list = el('div',{class:'legend'});
+    related.forEach(it=>{
+      list.append(el('a',{class:'tag',style:'cursor:pointer',onclick:()=>openItemDrawer(it)},it.name));
+    });
+    body.append(list);
+  }
+
+  // 底部操作
+  const ops = el('div',{style:'margin-top:18px;display:flex;gap:8px'});
+  ops.append(el('button',{class:'btn',onclick:()=>{hideDrawer();openEditor('supplier',s);}},'✎ 编辑该供应商'));
+  ops.append(el('button',{class:'btn danger',onclick:()=>{hideDrawer();deleteRecord('supplier',s.id);}},'× 删除'));
+  body.append(ops);
+  showDrawer();
+}
+
+/* ========== 11. RENDER: CALCULATOR ========== */
+function renderCalc(){
+  const wrap = el('div');
+  wrap.append(el('div',{class:'breadcrumb'},'工具 · Tools'));
+  wrap.append(el('h1',{},'成本计算器'));
+  wrap.append(el('div',{class:'sub'},'以 '+STATE.chip+' 默认参数为起点，修改输入后右侧实时更新。'));
+
+  const grid = el('div',{class:'grid cols-2',style:'margin-top:14px'});
+
+  // Form
+  const form = el('div',{class:'card calc-form'});
+  form.append(el('h3',{},'输入参数'));
+  const p = STATE.calc || {...TARGET_CHIPS[STATE.chip]};
+  STATE.calc = p;
+  const add = (key,label,step='any')=>{
+    const l = el('label',{},label);
+    const inp = el('input',{type:'number',step,value:p[key]});
+    inp.addEventListener('input',()=>{p[key]=parseFloat(inp.value)||0;update();});
+    form.append(l,inp);
+  };
+  add('dieAreaMm2','Die 面积 (mm²)','0.1');
+  add('waferPriceUsd','12 英寸晶圆单价 (USD)','10');
+  add('d0','缺陷密度 D0 (/cm²)','0.01');
+  add('maskSetUsd','掩膜版一次性 (USD)','100000');
+  add('pkgUsd','封装单颗 (USD)','0.01');
+  add('testUsd','测试单颗 (USD)','0.01');
+  add('royaltyUsd','IP 版税单颗 (USD)','0.01');
+  add('overheadPct','综合费用 % (物流/RMA/毛利)','0.5');
+  add('annualVolume','预期年销量 (颗)','100000');
+
+  // Output
+  const out = el('div',{class:'card'});
+  out.append(el('h3',{},'输出'));
+  const kpiRow = el('div',{class:'grid cols-2'});
+  const kpiUnit = kpi('单颗出厂成本 (USD)','','');
+  const kpiDie = kpi('Die 成本 (USD)','','');
+  kpiRow.append(kpiUnit,kpiDie);
+  out.append(kpiRow);
+  const rows = el('div',{style:'margin-top:10px'});
+  const rowDefs = [
+    ['DPW 每片出 Die','dpw',0],
+    ['良率 Yield','yPct',1],
+    ['好 Die / 片','gdw',0],
+    ['NRE 单颗摊销','nre',4],
+    ['封装 + 测试 + 版税','pkgtir',3],
+    ['基础成本（×1+Overhead 前）','base',3]
+  ];
+  const rowEls={};
+  rowDefs.forEach(([l,k])=>{
+    const r = el('div',{class:'out-row'});
+    r.append(el('span',{},l)); const b = el('b'); r.append(b);
+    rowEls[k]=b; rows.append(r);
+  });
+  out.append(rows);
+  const pieMount = el('div',{style:'margin-top:10px'}); out.append(pieMount);
+  out.append(el('div',{class:'hint',style:'margin-top:10px'},'敏感度（相对当前单颗成本）：'));
+  const sensMount = el('div'); out.append(sensMount);
+
+  grid.append(form,out);
+  wrap.append(grid);
+
+  function update(){
+    const r = computeUnitCost(p);
+    kpiUnit.querySelector('.val').textContent = fmt(r.unit);
+    kpiUnit.querySelector('.hint').textContent = `毛利率@ASP=$${fmt(r.unit*1.3,2)} → 23%`;
+    kpiDie.querySelector('.val').textContent = fmt(r.dieCost);
+    kpiDie.querySelector('.hint').textContent = `GDW ${fmtInt(r.gdw)}`;
+    rowEls.dpw.textContent = fmtInt(r.dpw);
+    rowEls.yPct.textContent = fmt(r.y*100,1)+' %';
+    rowEls.gdw.textContent = fmtInt(r.gdw);
+    rowEls.nre.textContent = '$ '+fmt(r.nrePerUnit,4);
+    rowEls.pkgtir.textContent = '$ '+fmt(p.pkgUsd+p.testUsd+p.royaltyUsd,3);
+    rowEls.base.textContent = '$ '+fmt(r.base,3);
+    // pie by actual components
+    pieMount.innerHTML='';
+    const unit = r.unit;
+    const overhead = r.unit - r.base;
+    const slices = [
+      {label:'D1 Die',value:r.dieCost/unit*100,color:domColor('D1')},
+      {label:'D2 Package',value:p.pkgUsd/unit*100,color:domColor('D2')},
+      {label:'D3 Test',value:p.testUsd/unit*100,color:domColor('D3')},
+      {label:'D4 NRE',value:r.nrePerUnit/unit*100,color:domColor('D4')},
+      {label:'D5 IP+Overhead',value:(p.royaltyUsd+overhead)/unit*100,color:domColor('D5')}
+    ];
+    pieMount.append(makePie(slices));
+    pieMount.append(makeLegend());
+    // sensitivity
+    sensMount.innerHTML='';
+    const variants = [
+      ['Die 面积 +10%','dieAreaMm2',1.1],['Die 面积 −10%','dieAreaMm2',0.9],
+      ['D0 +20%','d0',1.2],['D0 −20%','d0',0.8],
+      ['销量 +30%','annualVolume',1.3],['销量 −30%','annualVolume',0.7]
+    ];
+    variants.forEach(([label,k,m])=>{
+      const pp = {...p,[k]:p[k]*m};
+      const rr = computeUnitCost(pp);
+      const diff = (rr.unit-unit)/unit*100;
+      const row = el('div',{class:'out-row'});
+      row.append(el('span',{},label));
+      const b = el('b',{style:`color:${diff>0?'var(--d4)':'var(--ok)'}`},(diff>0?'+':'')+fmt(diff,2)+' %');
+      row.append(b); sensMount.append(row);
+    });
+  }
+  setTimeout(update,0);
+  return wrap;
+}
+
+/* ========== 12. RENDER: FORMULAS ========== */
+function renderFormulas(){
+  const wrap = el('div');
+  wrap.append(el('div',{class:'breadcrumb'},'工具 · Tools'));
+  wrap.append(el('h1',{},'公式推导 & 多芯片对比'));
+  wrap.append(el('div',{class:'sub'},'所有公式为行业教学通用形式。下方 9 颗示例芯片可点击切换为当前对标。'));
+
+  const c = el('div',{class:'card',style:'margin-top:14px'});
+  c.append(el('h3',{},'1) 每片晶圆出 Die 数 DPW'));
+  c.append(el('code',{class:'formula'},'DPW = π·(D/2)² / S − π·D / √(2·S)\n其中 D = 晶圆直径 (mm)，S = Die 面积 (mm²)'));
+  c.append(el('h3',{},'2) 良率（Murphy 模型）'));
+  c.append(el('code',{class:'formula'},'Y = ((1 − e^(−A·D0)) / (A·D0))²\n其中 A = Die 面积 (cm²)，D0 = 缺陷密度 (/cm²)'));
+  c.append(el('h3',{},'3) 好 Die 与 Die 成本'));
+  c.append(el('code',{class:'formula'},'GDW = DPW × Y\nDie$ = WaferPrice / GDW'));
+  c.append(el('h3',{},'4) 单颗出厂成本'));
+  c.append(el('code',{class:'formula'},'Unit$ = ( Die$ + Pkg$ + Test$ + Royalty$ + MaskSet$/Volume ) × (1 + Overhead%)'));
+  wrap.append(c);
+
+  // 多芯片对比表
+  const cmp = el('div',{class:'card',style:'margin-top:14px;padding:0;overflow:auto'});
+  cmp.append(el('h3',{style:'padding:14px 14px 0'},'示例芯片对比（点击行切换到该芯片）'));
+  cmp.append(el('div',{class:'hint',style:'padding:0 14px'},'含 RK / 全志 / Sigmastar / 爱芯元智 / 算能 等多颗边缘 SoC。可在「成本计算器」页修改参数，或点 ··· 管理。'));
+  const tbl = el('table',{class:'matrix-table'});
+  tbl.innerHTML = '<thead><tr><th>型号</th><th>厂商</th><th>节点</th><th>Die mm²</th><th>Wafer$</th><th>DPW</th><th>Y%</th><th>GDW</th><th>Die$</th><th>Pkg+Test+IP</th><th>NRE/颗</th><th>Unit$</th></tr></thead>';
+  const tb = el('tbody');
+  Object.keys(TARGET_CHIPS).forEach(id=>{
+    const ch = TARGET_CHIPS[id];
+    const r = computeUnitCost(ch);
+    const tr = el('tr',{onclick:()=>setChip(id),style:'cursor:pointer'});
+    if(STATE.chip===id) tr.style.background='var(--chip)';
+    tr.append(el('td',{},el('b',{},id)));
+    tr.append(el('td',{},ch.vendor||'—'));
+    tr.append(el('td',{},ch.node));
+    tr.append(el('td',{},fmt(ch.dieAreaMm2,0)));
+    tr.append(el('td',{},'$ '+fmt(ch.waferPriceUsd,0)));
+    tr.append(el('td',{},fmtInt(r.dpw)));
+    tr.append(el('td',{},fmt(r.y*100,1)));
+    tr.append(el('td',{},fmtInt(r.gdw)));
+    tr.append(el('td',{},'$ '+fmt(r.dieCost,2)));
+    tr.append(el('td',{},'$ '+fmt(ch.pkgUsd+ch.testUsd+ch.royaltyUsd,2)));
+    tr.append(el('td',{},'$ '+fmt(r.nrePerUnit,3)));
+    tr.append(el('td',{},el('b',{style:'color:var(--brand)'},'$ '+fmt(r.unit,2))));
+    tb.append(tr);
+  });
+  tbl.append(tb); cmp.append(tbl);
+  wrap.append(cmp);
+
+  // 当前芯片 walkthrough
+  const chip = TARGET_CHIPS[STATE.chip];
+  const r = computeUnitCost(chip);
+  const A = chip.dieAreaMm2/100;
+  const w = el('div',{class:'card',style:'margin-top:14px'});
+  w.append(el('h3',{},'完整扣算走查 · '+chip.name+'（'+chip.node+'）'));
+  const lines = [
+    ['Die 面积 A',fmt(chip.dieAreaMm2,0)+' mm² = '+fmt(A,2)+' cm²'],
+    ['晶圆直径 D','300 mm'],
+    ['DPW',fmtInt(r.dpw)+' 颗/片'],
+    ['D0',fmt(chip.d0,2)+' /cm² → A·D0 = '+fmt(A*chip.d0,3)],
+    ['Yield',fmt(r.y*100,1)+' %'],
+    ['GDW',fmtInt(r.gdw)+' 颗/片'],
+    ['Wafer 单价','$ '+fmt(chip.waferPriceUsd,0)],
+    ['Die 成本','$ '+fmt(r.dieCost,2)],
+    ['Pkg + Test + Royalty','$ '+fmt(chip.pkgUsd+chip.testUsd+chip.royaltyUsd,2)],
+    ['NRE 单颗摊销','$ '+fmt(chip.maskSetUsd/1e6,1)+'M / '+fmtInt(chip.annualVolume)+' = $ '+fmt(r.nrePerUnit,3)],
+    ['基础成本','$ '+fmt(r.base,2)],
+    ['× (1 + '+chip.overheadPct+'% overhead) → 单颗出厂','$ '+fmt(r.unit,2)]
+  ];
+  const t2 = el('table');
+  t2.innerHTML = '<thead><tr><th>项</th><th>值</th></tr></thead>';
+  const tb2 = el('tbody');
+  lines.forEach(([k,v])=>{const tr=el('tr');tr.append(el('td',{},k),el('td',{},v));tb2.append(tr);});
+  t2.append(tb2); w.append(t2);
+  wrap.append(w);
+  return wrap;
+}
+
+/* ========== 12b. RENDER: PACKAGES ========== */
+function renderPackages(){
+  const wrap = el('div');
+  wrap.append(el('div',{class:'breadcrumb'},'专项 · 封装'));
+  wrap.append(el('h1',{},'封装形式与选型'));
+  wrap.append(el('div',{class:'sub'},'封装形式决定 Pkg$ 与 PCB 设计，也影响上下游 BOM。常见 8 种如下，可增删改。'));
+
+  // toolbar
+  const tb = el('div',{class:'table-toolbar'});
+  const right = el('div',{class:'left'});
+  right.append(el('button',{class:'btn primary',onclick:()=>openEditor('pkg',null)},'+ 新增封装形式'));
+  right.append(el('button',{class:'btn',onclick:()=>exportCSV('pkg')},'⬇ 导出 CSV'));
+  right.append(el('button',{class:'btn',onclick:()=>triggerImport('pkg')},'⬆ 导入 CSV'));
+  right.append(el('button',{class:'btn',onclick:resetAll},'恢复默认'));
+  tb.append(el('div',{class:'left'},el('span',{class:'hint'},'共 '+PACKAGE_FORMATS.length+' 种')));
+  tb.append(right); wrap.append(tb);
+
+  const card = el('div',{class:'card',style:'margin-top:8px;padding:0;overflow:auto'});
+  const t = el('table');
+  t.innerHTML = '<thead><tr><th>代号</th><th>全名</th><th>引脚范围</th><th>成本区间</th><th>典型场景</th><th>供应商</th><th style="width:90px">操作</th></tr></thead>';
+  const body = el('tbody');
+  PACKAGE_FORMATS.forEach(p=>{
+    const tr = el('tr');
+    tr.append(el('td',{},el('b',{},p.name)));
+    tr.append(el('td',{},p.fullName||'—'));
+    tr.append(el('td',{},p.pinRange||'—'));
+    tr.append(el('td',{},p.costRange||'—'));
+    tr.append(el('td',{},p.useCase||'—'));
+    tr.append(el('td',{},p.suppliers||'—'));
+    const op = el('td');
+    op.append(el('button',{class:'btn sm',onclick:e=>{e.stopPropagation();openEditor('pkg',p);}},'✎'));
+    op.append(el('button',{class:'btn sm danger',style:'margin-left:4px',onclick:e=>{e.stopPropagation();deleteRecord('pkg',p.id);}},'×'));
+    tr.append(op); body.append(tr);
+  });
+  t.append(body); card.append(t); wrap.append(card);
+
+  // 封装与成本域的联动提示
+  const tip = el('div',{class:'card',style:'margin-top:14px'});
+  tip.append(el('h3',{},'封装 × 成本域'));
+  tip.append(el('div',{class:'hint'},'封装形式主要驱动 D2（封装域）：贴片、基板、贴球、塑封。选型错误会提高 PCB 层数、拉高 BOM。'));
+  const grid = el('div',{class:'grid cols-3',style:'margin-top:10px'});
+  PACKAGE_FORMATS.forEach(p=>{
+    const k = el('div',{class:'card kpi'});
+    k.append(el('div',{class:'label'},p.name));
+    k.append(el('div',{class:'val',style:'font-size:18px'},p.costRange||'—'));
+    k.append(el('div',{class:'hint'},p.useCase||'—'));
+    grid.append(k);
+  });
+  tip.append(grid); wrap.append(tip);
+  return wrap;
+}
+
+/* ========== 12c. RENDER: WAFER PRICE MATRIX ========== */
+function renderWafer(){
+  const wrap = el('div');
+  wrap.append(el('div',{class:'breadcrumb'},'专项 · 晶圆价格'));
+  wrap.append(el('h1',{},'晶圆价格矩阵 · 工艺×代工厂'));
+  wrap.append(el('div',{class:'sub'},'同一节点不同代工厂可能相差 10–20 %；添加代工厂可在“供应商”页面补充，价格可在本页编辑。数据仅供教学，不代表真实报价。'));
+
+  const tb = el('div',{class:'table-toolbar'});
+  const right = el('div',{class:'left'});
+  right.append(el('button',{class:'btn primary',onclick:()=>openEditor('wafer',null)},'+ 新增节点'));
+  right.append(el('button',{class:'btn',onclick:()=>exportCSV('wafer')},'⬇ 导出 CSV'));
+  right.append(el('button',{class:'btn',onclick:()=>triggerImport('wafer')},'⬆ 导入 CSV'));
+  right.append(el('button',{class:'btn',onclick:resetAll},'恢复默认'));
+  tb.append(el('div',{class:'left'},el('span',{class:'hint'},'共 '+WAFER_PRICES.length+' 个节点 × '+WAFER_FOUNDRIES.length+' 代工厂')));
+  tb.append(right); wrap.append(tb);
+
+  const card = el('div',{class:'card',style:'margin-top:8px;padding:14px'});
+  card.append(makeWaferPriceTable(false));
+  wrap.append(card);
+
+  // 当前芯片高亮提示
+  const ch = TARGET_CHIPS[STATE.chip];
+  if(ch){
+    const hint = el('div',{class:'card',style:'margin-top:14px'});
+    hint.append(el('h3',{},'当前对标：'+ch.name));
+    hint.append(el('div',{class:'hint'},'节点：'+ch.node+' · 计算器里设定的 Wafer 单价：$ '+fmt(ch.waferPriceUsd,0)+'。可参考上表选择同节点不同代工厂、调整价格。'));
+    wrap.append(hint);
+  }
+  return wrap;
+}
+
+/* ========== 12d. CSV 工具 ========== */
+function csvEscape(v){
+  if(v==null) return '';
+  if(Array.isArray(v)) v = v.join('|');
+  const s = String(v);
+  if(/[",\n]/.test(s)) return '"'+s.replace(/"/g,'""')+'"';
+  return s;
+}
+function toCSV(rows, columns){
+  const head = columns.join(',');
+  const body = rows.map(r=>columns.map(c=>csvEscape(r[c])).join(',')).join('\n');
+  return head+'\n'+body;
+}
+function parseCSV(text){
+  const rows = []; let cur = []; let f = ''; let q = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(q){
+      if(c==='"' && text[i+1]==='"'){ f+='"'; i++; }
+      else if(c==='"'){ q=false; }
+      else f+=c;
+    } else {
+      if(c==='"') q=true;
+      else if(c===','){ cur.push(f); f=''; }
+      else if(c==='\n' || c==='\r'){
+        if(c==='\r' && text[i+1]==='\n') i++;
+        cur.push(f); rows.push(cur); cur=[]; f='';
+      } else f+=c;
+    }
+  }
+  if(f.length||cur.length){cur.push(f); rows.push(cur);}
+  if(!rows.length) return [];
+  const head = rows.shift();
+  return rows.filter(r=>r.length>=head.length-1 && r.some(x=>x!=='')).map(r=>{
+    const o = {};
+    head.forEach((h,i)=>{o[h]=r[i]==null?'':r[i];});
+    return o;
+  });
+}
+function downloadCSV(filename, csv){
+  const blob = new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function importCSVFile(type, file){
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const text = reader.result;
+      const rows = parseCSV(text);
+      applyCSVRows(type, rows);
+      saveAll(); buildChipPicker(); render();
+      toast('已导入 '+rows.length+' 条记录');
+    }catch(e){alert('导入失败：'+e.message);}
+  };
+  reader.readAsText(file,'utf-8');
+}
+// 字段归一：数字转数、|分隔转数组
+function normalizeRow(type, raw){
+  const sc = SCHEMA[type==='chip'?'chip':type]; if(!sc) return raw;
+  const o = {};
+  sc.fields.forEach(f=>{
+    let v = raw[f.k];
+    if(v===undefined||v==='') return;
+    if(f.type==='number') v = parseFloat(v);
+    else if(f.type==='csv') v = String(v).split(/[|,]/).map(s=>s.trim()).filter(Boolean);
+    o[f.k] = v;
+  });
+  // 其他未声明的列（如 capabilities/products）也保留
+  Object.keys(raw).forEach(k=>{
+    if(o[k]!==undefined) return;
+    let v = raw[k];
+    if(v==='') return;
+    if(/^-?\d+(?:\.\d+)?$/.test(v)) v = parseFloat(v);
+    else if(typeof v==='string' && v.includes('|')) v = v.split('|').map(s=>s.trim()).filter(Boolean);
+    o[k] = v;
+  });
+  return o;
+}
+function applyCSVRows(type, rows){
+  if(type==='chip'){
+    rows.forEach(r=>{
+      const obj = normalizeRow('chip', r);
+      if(!obj.name) return;
+      TARGET_CHIPS[obj.name] = obj;
+    });
+  } else {
+    const arr = getCollection(type), sc = SCHEMA[type];
+    rows.forEach(r=>{
+      const obj = normalizeRow(type, r);
+      const id = obj[sc.idKey]; if(!id) return;
+      const idx = arr.findIndex(x=>x[sc.idKey]===id);
+      if(idx>=0) arr[idx] = obj; else arr.push(obj);
+    });
+  }
+}
+function exportCSV(type){
+  if(type==='chip'){
+    const cols = ['name','vendor','node','pkg','dieAreaMm2','waferPriceUsd','d0','maskSetUsd','pkgUsd','testUsd','royaltyUsd','overheadPct','annualVolume','blurb'];
+    downloadCSV('chips.csv', toCSV(Object.values(TARGET_CHIPS), cols));
+  } else if(type==='supplier'){
+    const cols = ['id','name','layer','region','hq','founded','website','role','capabilities','products','notes'];
+    downloadCSV('suppliers.csv', toCSV(SUPPLIERS, cols));
+  } else if(type==='wafer'){
+    const cols = ['node','TSMC','Samsung','SMIC','UMC','GF','Intel','HHGrace','NexChip'];
+    downloadCSV('wafer-prices.csv', toCSV(WAFER_PRICES, cols));
+  } else if(type==='item'){
+    const cols = ['id','name','domainId','phase','type','drivers','range','description','supplierIds'];
+    downloadCSV('cost-items.csv', toCSV(COST_ITEMS, cols));
+  } else if(type==='pkg'){
+    const cols = ['id','name','fullName','pinRange','costRange','useCase','suppliers'];
+    downloadCSV('packages.csv', toCSV(PACKAGE_FORMATS, cols));
+  }
+  toast('已导出 '+type+'.csv，可用 Excel 编辑后导入');
+}
+function triggerImport(type){
+  let inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.csv,text/csv';
+  inp.addEventListener('change',e=>{const f=e.target.files[0]; if(f) importCSVFile(type,f);});
+  inp.click();
+}
+
+/* ========== 12e. RENDER: CHIPS COMPARISON (主表格页) ========== */
+function renderChips(){
+  const wrap = el('div');
+  wrap.append(el('div',{class:'breadcrumb'},'主页 · 芯片对比'));
+  wrap.append(el('h1',{},'芯片对比主表'));
+  wrap.append(el('div',{class:'sub'},'全部对标芯片的完整参数 + 计算结果。表格可导出为 CSV（用 Excel 编辑），也可将修改后的 CSV 导回。'));
+
+  // KPI 汇总
+  const chips = Object.values(TARGET_CHIPS);
+  if(chips.length){
+    const costs = chips.map(c=>computeUnitCost(c).unit);
+    const avg = costs.reduce((a,b)=>a+b,0)/costs.length;
+    const minIdx = costs.indexOf(Math.min(...costs));
+    const maxIdx = costs.indexOf(Math.max(...costs));
+    const kpis = el('div',{class:'grid cols-3',style:'margin-top:14px'});
+    kpis.append(kpi('对标芯片数',chips.length+'','可增删改，数据保存在本地 + CSV'));
+    kpis.append(kpi('平均单颗出厂','$ '+fmt(avg,2),'9 颗边缘 SoC 算术平均'));
+    kpis.append(kpi('性价比区间','$ '+fmt(costs[minIdx],2)+' → $ '+fmt(costs[maxIdx],2),chips[minIdx].name+'  ↔  '+chips[maxIdx].name));
+    wrap.append(kpis);
+  }
+
+  // 工具栏
+  const tb = el('div',{class:'table-toolbar'});
+  tb.append(el('div',{class:'left'},el('span',{class:'hint'},'共 '+chips.length+' 颗。点击行可切换到该芯片为当前对标')));
+  const right = el('div',{class:'left'});
+  right.append(el('button',{class:'btn primary',onclick:()=>openEditor('chip',null)},'+ 新增芯片'));
+  right.append(el('button',{class:'btn',onclick:()=>exportCSV('chip')},'⬇ 导出 CSV'));
+  right.append(el('button',{class:'btn',onclick:()=>triggerImport('chip')},'⬆ 导入 CSV'));
+  right.append(el('button',{class:'btn',onclick:resetAll},'恢复默认'));
+  tb.append(right); wrap.append(tb);
+
+  // 主表格
+  const card = el('div',{class:'card',style:'margin-top:8px;padding:0;overflow:auto'});
+  const t = el('table',{class:'matrix-table'});
+  t.innerHTML = '<thead><tr>'
+    +'<th>型号</th><th>厂商</th><th>节点</th><th>封装</th>'
+    +'<th>Die mm²</th><th>Wafer$</th><th>D0</th><th>Mask$ M</th>'
+    +'<th>Pkg$</th><th>Test$</th><th>IP$</th><th>Ovh%</th><th>年产</th>'
+    +'<th>Die$</th><th>Y%</th><th>Unit$</th><th style="width:90px">操作</th>'
+    +'</tr></thead>';
+  const tbody = el('tbody');
+  Object.keys(TARGET_CHIPS).forEach(id=>{
+    const c = TARGET_CHIPS[id];
+    const r = computeUnitCost(c);
+    const tr = el('tr',{onclick:()=>setChip(id),style:'cursor:pointer'});
+    if(STATE.chip===id) tr.style.background='var(--chip)';
+    tr.append(el('td',{},el('b',{},c.name)));
+    tr.append(el('td',{},c.vendor||'—'));
+    tr.append(el('td',{},c.node));
+    tr.append(el('td',{},c.pkg||'—'));
+    tr.append(el('td',{},fmt(c.dieAreaMm2,0)));
+    tr.append(el('td',{},'$ '+fmt(c.waferPriceUsd,0)));
+    tr.append(el('td',{},fmt(c.d0,2)));
+    tr.append(el('td',{},fmt(c.maskSetUsd/1e6,1)));
+    tr.append(el('td',{},'$ '+fmt(c.pkgUsd,2)));
+    tr.append(el('td',{},'$ '+fmt(c.testUsd,2)));
+    tr.append(el('td',{},'$ '+fmt(c.royaltyUsd,2)));
+    tr.append(el('td',{},fmt(c.overheadPct,0)));
+    tr.append(el('td',{},fmtInt(c.annualVolume)));
+    tr.append(el('td',{},'$ '+fmt(r.dieCost,2)));
+    tr.append(el('td',{},fmt(r.y*100,1)));
+    tr.append(el('td',{},el('b',{style:'color:var(--brand)'},'$ '+fmt(r.unit,2))));
+    const op = el('td');
+    op.append(el('button',{class:'btn sm',onclick:e=>{e.stopPropagation();openEditor('chip',c);}},'✎'));
+    op.append(el('button',{class:'btn sm danger',style:'margin-left:4px',onclick:e=>{e.stopPropagation();deleteRecord('chip',id);}},'×'));
+    tr.append(op);
+    tbody.append(tr);
+  });
+  t.append(tbody); card.append(t); wrap.append(card);
+
+  // 成本结构叠片条
+  const bar = el('div',{class:'card',style:'margin-top:14px'});
+  bar.append(el('h3',{},'成本结构叠片条 · 点击切换'));
+  bar.append(makeStackedBars());
+  bar.append(makeLegend());
+  wrap.append(bar);
+
+  // CSV 使用提示
+  const tip = el('div',{class:'card',style:'margin-top:14px'});
+  tip.append(el('h3',{},'如何用外部表格维护数据'));
+  tip.append(el('ol',{style:'margin:6px 0 0 18px;padding:0;line-height:1.7;font-size:13px'},[
+    el('li',{},'点击“⬇ 导出 CSV”，下载 chips.csv 到本地；'),
+    el('li',{},'用 Excel / Numbers / WPS 打开编辑（可改参数、加新行）；'),
+    el('li',{},'保存为 UTF-8 CSV；'),
+    el('li',{},'点击“⬆ 导入 CSV”选中文件，页面按 name 合并覆盖；同时保存到本地（localStorage）。')
+  ]));
+  tip.append(el('div',{class:'hint',style:'margin-top:6px'},'同样逻辑适用于供应商、成本项、封装、晶圆价格、术语表 — 可在各页面上方“⬇/⬆”按钮使用。'));
+  wrap.append(tip);
+
+  return wrap;
+}
+
+/* ========== 13. RENDER: GLOSSARY ========== */
+function renderGlossary(){
+  const wrap = el('div');
+  wrap.append(el('div',{class:'breadcrumb'},'工具 · Tools'));
+  wrap.append(el('h1',{},'术语表'));
+  wrap.append(el('div',{class:'sub'},'常用缩写与英文术语。共 '+GLOSSARY.length+' 条，可增删改。'));
+
+  const tb = el('div',{class:'table-toolbar'});
+  const right = el('div',{class:'left'});
+  right.append(el('button',{class:'btn primary',onclick:()=>openEditor('glossary',null)},'+ 新增术语'));
+  right.append(el('button',{class:'btn',onclick:resetAll},'恢复默认'));
+  tb.append(el('div',{class:'left'},'')); tb.append(right); wrap.append(tb);
+
+  const card = el('div',{class:'card',style:'margin-top:8px;padding:0;overflow:auto'});
+  const tbl = el('table');
+  tbl.innerHTML = '<thead><tr><th style="width:120px">术语</th><th>释义</th><th style="width:90px">操作</th></tr></thead>';
+  const body = el('tbody');
+  [...GLOSSARY].sort((a,b)=>a.term.localeCompare(b.term)).forEach(g=>{
+    const tr = el('tr');
+    tr.append(el('td',{},el('b',{},g.term)));
+    tr.append(el('td',{},g.def));
+    const op = el('td');
+    op.append(el('button',{class:'btn sm',onclick:e=>{e.stopPropagation();openEditor('glossary',g);}},'✎'));
+    op.append(el('button',{class:'btn sm danger',style:'margin-left:4px',onclick:e=>{e.stopPropagation();deleteRecord('glossary',g.term);}},'×'));
+    tr.append(op);
+    body.append(tr);
+  });
+  tbl.append(body); card.append(tbl); wrap.append(card);
+  return wrap;
+}
+
+/* ========== 14. DRAWER + SEARCH + INIT ========== */
+function showDrawer(){$('#drawer').classList.add('open');$('#backdrop').classList.add('show');}
+function hideDrawer(){$('#drawer').classList.remove('open');$('#backdrop').classList.remove('show');}
+
+function runSearch(q){
+  const box = $('#searchResults'); box.innerHTML=''; if(!q){box.classList.remove('show');return;}
+  const Q = q.toLowerCase();
+  const groups = [
+    {title:'成本域 L2', items:DOMAINS.filter(d=>(d.name+d.description+d.drivers).toLowerCase().includes(Q)).map(d=>({label:d.id+' '+d.name,desc:d.description,go:()=>setTab('domains')}))},
+    {title:'成本项 L3', items:COST_ITEMS.filter(i=>(i.name+i.description+i.drivers+i.range).toLowerCase().includes(Q)).map(i=>({label:i.name,desc:i.domainId+' · '+i.phase,go:()=>{setTab('items');setTimeout(()=>openItemDrawer(i),50);}}))},
+    {title:'供应商 L4', items:SUPPLIERS.filter(s=>(s.name+s.role+s.notes+s.layer).toLowerCase().includes(Q)).map(s=>({label:s.name,desc:s.layer+' · '+s.region,go:()=>{setTab('suppliers');setTimeout(()=>openSupplierDrawer(s),50);}}))},
+    {title:'术语', items:GLOSSARY.filter(g=>(g.term+g.def).toLowerCase().includes(Q)).map(g=>({label:g.term,desc:g.def,go:()=>setTab('glossary')}))}
+  ];
+  let any=false;
+  groups.forEach(g=>{
+    if(!g.items.length) return; any=true;
+    box.append(el('div',{class:'group-h'},g.title));
+    g.items.slice(0,6).forEach(it=>{
+      const i = el('div',{class:'item',onclick:()=>{it.go();box.classList.remove('show');$('#globalSearch').value='';}});
+      i.append(el('div',{},el('b',{},it.label)));
+      i.append(el('div',{class:'hint'},(it.desc||'').slice(0,80)));
+      box.append(i);
+    });
+  });
+  box.classList.toggle('show',any);
+}
+
+function init(){
+  applyEdits(); // 合并本地保存的编辑
+  if(!TARGET_CHIPS[STATE.chip]) STATE.chip = Object.keys(TARGET_CHIPS)[0];
+  STATE.calc = {...TARGET_CHIPS[STATE.chip]};
+  buildChipPicker();
+  $$('nav.side a').forEach(a=>a.addEventListener('click',()=>setTab(a.dataset.tab)));
+  $('#themeBtn').addEventListener('click',()=>{
+    const b = document.body;
+    b.classList.toggle('dark', !b.classList.contains('dark'));
+    b.classList.toggle('light', !b.classList.contains('dark'));
+  });
+  $('#drawerClose').addEventListener('click',hideDrawer);
+  $('#backdrop').addEventListener('click',hideDrawer);
+  $('#globalSearch').addEventListener('input',e=>runSearch(e.target.value.trim()));
+  $('#globalSearch').addEventListener('blur',()=>setTimeout(()=>$('#searchResults').classList.remove('show'),200));
+  $('#globalSearch').addEventListener('focus',e=>{if(e.target.value.trim()) runSearch(e.target.value.trim());});
+  // modal
+  $('#editCancel').addEventListener('click',closeEditor);
+  $('#editModal').addEventListener('click',e=>{if(e.target.id==='editModal') closeEditor();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape') closeEditor();});
+  // chip 管理按钮：点击弹出菜单 (新增 / 编辑当前 / 删除当前 / 重置)
+  $('#chipMgrBtn').addEventListener('click',()=>{
+    const cur = STATE.chip;
+    const action = prompt('芯片管理：\n  1 = 新增芯片\n  2 = 编辑当前 ('+cur+')\n  3 = 删除当前 ('+cur+')\n  4 = 全部恢复默认\n请输入 1/2/3/4');
+    if(action==='1') openEditor('chip',null);
+    else if(action==='2') openEditor('chip',TARGET_CHIPS[cur]);
+    else if(action==='3') deleteRecord('chip',cur);
+    else if(action==='4') resetAll();
+  });
+  render();
+}
+init();
+</script>
+</body>
+</html>

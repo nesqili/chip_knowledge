@@ -1,0 +1,67 @@
+id,name,layer,region,hq,founded,website,role,capabilities,products,notes
+Arm,Arm,IP,英国,剑桥,1990,arm.com,CPU IP 巨头（Cortex-A/R/M / Mali GPU）,CPU IP|GPU IP|NPU IP (Ethos)|总线 IP (AMBA)|设计服务,Cortex-A55/A76/A78/X3|Cortex-M0/M3/M33/M55|Mali-G52/G610|Ethos-N78/U55,RK3566 用 4×A55+Mali-G52；RK3588 用 4×A76+4×A55+Mali-G610。
+Synopsys,Synopsys 新思科技,EDA/IP,美国,岗拉辛迪,1986,synopsys.com,EDA 龙头 + DesignWare 接口 IP,逻辑综合 (DC)|物理设计 (Fusion)|签核 (PT)|仿真|接口 IP,Design Compiler|IC Compiler II|PrimeTime|VCS|DesignWare USB/PCIe/DDR/MIPI,EDA 三巨头之一。
+Cadence,Cadence 思唯,EDA/IP,美国,圣他克拉拉,1988,cadence.com,EDA + Tensilica DSP IP,模拟仿真 (Spectre)|数字实现|硬件仿真加速|封装/PCB EDA|DSP IP,Virtuoso|Innovus|Genus|Palladium|Tensilica HiFi/Vision DSP,Tensilica HiFi DSP 广泛被音频芯片集成。
+Imagination,Imagination Tech,IP,英国,圣尔抑斯,1985,imaginationtech.com,PowerVR GPU / NPU IP,GPU IP|NPU IP|光追踪|车载 ISP,IMG BXT/BXM/BXS|PowerVR Series9XE|IMG NNA,被中资背景股东控股；RISC-V Catapult 产品线。
+SiFive,SiFive,IP,美国,圣克拉拉,2015,sifive.com,RISC-V CPU IP,RISC-V CPU IP|定制核服务,U74/U54|P650/P870|X280 Vector,
+VeriSilicon,芯原股份 VeriSilicon,IP,中国大陆,上海,2001,verisilicon.com,一站式芯片定制 + GPU/NPU/ISP IP,SoC 定制设计服务|GPU IP (Vivante)|NPU IP (VIP)|ISP IP|VPU IP,Vivante GC GPU|VIP9000 NPU|Hantro VPU|ZSP DSP,国内最大 IP/设计服务商。
+Innosilicon,芯动科技 Innosilicon,IP,中国大陆,武汉,2006,innosilicon.com.cn,高速接口 IP / GDDR PHY / GPU,DDR/LPDDR/GDDR PHY|PCIe/SerDes|HDMI/DP|独立 GPU 芯片,DDR4/5 PHY|GDDR6X|Fenghua 风华GPU,
+Empyrean,华大九天 Empyrean,EDA,中国大陆,北京,2009,empyrean.com.cn,国产 EDA 龙头,模拟全流程|面板设计全流程|存储器 EDA|快仿真,ALPS|Aether|Argus|XTime,A 股上市（688150）。国产替代主力。
+Primarius,概伦电子 Primarius,EDA,中国大陆,上海,2010,primarius-tech.com,器件建模 / 电路仿真 EDA,SPICE 建模|快仿真|存储 EDA,NanoSpice|BSIMProPlus,A 股上市（688206）。
+XEPIC,芯华章 X-EPIC,EDA,中国大陆,南京,2020,x-epic.com,数字验证 EDA,仿真器|形式验证|硬件仿真加速,GalaxSim|GalaxFV|GalaxEC,
+TSMC,台积电 TSMC,Foundry,中国台湾,新竹,1987,tsmc.com,全球最先进逻辑代工龙头,N3/N2 先进逻辑|CoWoS 先进封装|车规 N5A|RF/MS,N3E/N3P|N5/N4P|N7/N6|16FFC|22ULL|28HPC+,N3/N2 量产龙头。
+Samsung,三星代工 Samsung Foundry,Foundry,韩国,首尔,2005,samsungfoundry.com,先进节点 + RK3588 代工,3GAE GAA|5LPE/4LPE|8LPP|GDDR6X 集成,SF3|SF4|SF5|8LPP|14LPP,8LPP 量产 RK3588 量级产品。
+SMIC,中芯国际 SMIC,Foundry,中国大陆,上海,2000,smics.com,中国大陆代工龙头,28/22nm|14nm FinFET|车规 / 特色工艺|BCD,28HKC+|22ULL|14LPP,A 股 + 港股（688981/981.HK）。RK3566 类 22nm 产能来源之一。
+HHGrace,华虹宏力 HHGrace,Foundry,中国大陆,上海,1996,huahonggrace.com,成熟 & 特色工艺,55/40/28nm|BCD 电源|嵌入式 Flash|车规,28nm Logic|55/40 BCD|eFlash,电源管理 / 车规 / RF 主力。港股（1347.HK）。
+NexChip,晶合集成 NexChip,Foundry,中国大陆,合肥,2015,nexchip.com.cn,面板驱动 / 90–40nm,DDIC|CIS|PMIC|MCU,90/55/40nm Logic|CIS 工艺,A 股（68837x）。
+SilanIC,士兰微 Silan,Foundry,中国大陆,杭州,1997,silan.com.cn,IDM（电源/MCU/功率）,BCD|MOSFET|IGBT|MCU,电源 IC|功率器件,A 股（600460）。
+CRMicro,华润微 CR Micro,Foundry,中国大陆,无锡,1983,crmicro.com,IDM（功率/MEMS/特色工艺）,8–12 寸代工|MOSFET/IGBT|MEMS,电源 IC|功率器件|传感器,A 股（68803x）。
+XMC,武汉新芯 XMC,Foundry,中国大陆,武汉,2006,xmcwh.com,存储 + 特色工艺,NOR Flash|3D NAND 代工|CIS|MEMS,NOR 工艺|CMOS 图像,长江存储控股。
+ShinEtsu,信越化学 Shin-Etsu,Wafer,日本,东京,1926,shinetsu.co.jp,硅片 Top 1,300mm 抛光片|EPI|SOI,300mm CZ|SOI Wafer,
+NSIG,沪硅产业 NSIG,Wafer,中国大陆,上海,2015,nsig.com,国产 300mm 硅片领头,300mm 抛光/EPI/SOI|200mm|RF SOI,300mm CZ|EPI Wafer|SOI,A 股（68812x）。
+SinoWafer,立昂微 Sino Wafer,Wafer,中国大陆,杭州,2002,lionsemi.com,半导体硅片,200mm|RF 双极|MEMS,8–12寸 Wafer,A 股（605358）。
+TCLZh,中环股份 TCL Zhonghuan,Wafer,中国大陆,天津,1958,tjsemi.com,半导体 + 光伏硅片,200/300mm|SiC|光伏硅,12寸 Logic Wafer|SiC 衬片,A 股（002129）。
+Wellsemi,路维光电 Wellsemi,Mask,中国大陆,深圳,2002,wellsemi.com,国产光罩,250nm 以上 Mask|FPD Mask,28–250nm Mask,A 股（68810x）。
+Qinmei,清溢光电 Qingyi,Mask,中国大陆,深圳,1997,qy-pe.com,光罩,IC Mask|FPD Mask|触摸屏 Mask,Photomask,A 股（002959）。
+ASE,日月光 ASE,OSAT,中国台湾,高雄,1984,aseglobal.com,全球 OSAT 龙头,FCBGA|SiP|WLCSP|PoP|Fan-out,FCBGA 封装|SiP 模组|TestService,含 SPIL。
+Amkor,安靠 Amkor,OSAT,美国/韩国,亚利桑那,1968,amkor.com,OSAT No.2,FCBGA|MCM|SiP|RF,SLIM|SLIT|S-Connect Chiplet,
+JCET,长电科技 JCET,OSAT,中国大陆,江阴,2003,jcetglobal.com,本土最大 OSAT,FCBGA|XDFOI Chiplet|SiP|WLCSP,XDFOI 2.5D|eWLB|FCBGA,A 股（600584），含星科金朋。
+Tongfu,通富微电 Tongfu,OSAT,中国大陆,南通,1997,tfme.com,OSAT（AMD 重要伙伴）,FCBGA|MCM|Chiplet|BGA,AMD 封装|FCBGA,A 股（002156）。
+HuaTian,华天科技 HuaTian,OSAT,中国大陆,天水,2003,tshtkj.com,本土 OSAT 三巨头之一,QFN|FCBGA|SiP|WLCSP|Fan-out,eFlash 封装|FCBGA|MEMS,A 股（002185）。
+ChinaWLCSP,晶方科技 China WLCSP,OSAT,中国大陆,苏州,2005,chinawlcsp.com,CIS / WLCSP 专家,WLCSP|CIS 封装|TSV|Glass,CIS 模组|12寸 WLCSP,A 股（603005）。
+ForeChip,甬矽电子 ForeChip,OSAT,中国大陆,宁波,2017,forechip.com,中高端 OSAT,FCBGA|BGA|LGA|SiP,FCBGA|MEMS 封装,A 股（68878x）。
+Unimicron,欣兴 Unimicron,Substrate,中国台湾,桃园,1990,unimicron.com,ABF 基板 Top,ABF|BT|CSP|HDI,FCBGA 基板|SiP 基板,
+Ibiden,揖斐电 Ibiden,Substrate,日本,岐阜,1912,ibiden.com,高端 ABF 基板,ABF 基板|HDI,Intel/AMD 高端基板,
+SCC,深南电路 SCC,Substrate,中国大陆,深圳,1984,scc-cn.com,国产 PCB / IC 基板,HDI|封装基板|高多层,FCBGA 基板|BT 基板,A 股（002916）。
+Fastprint,兴森科技 Fastprint,Substrate,中国大陆,广州,1999,fastprint.com.cn,高端 PCB / IC 基板,HDI|封装基板|柔性板,IC 基板|HDI,A 股（002436）。
+Teradyne,泰瑞达 Teradyne,ATE,美国,北读,1960,teradyne.com,测试机,SoC ATE|存储 ATE|车规,UltraFLEX|J750|MagnumV,
+Advantest,爱德万 Advantest,ATE,日本,东京,1954,advantest.com,测试机,SoC ATE|存储 ATE|HBM 测试,V93000|T2000|T5851,
+ChuangShi,长川科技 ChuangShi,ATE,中国大陆,杭州,2008,accotest.com,国产测试机 / Handler,SoC ATE|Handler|分选机,CTA8200|STS8200,A 股（300604）。
+Accotest,华峰测控 Accotest,ATE,中国大陆,北京,1993,accotest.com.cn,国产模拟测试机,模拟 ATE|电源 ATE|MCU ATE,STS8200|STS8300,A 股（688200）。
+SKHynix,SK Hynix 海力士,Memory,韩国,首尔,1983,skhynix.com,DRAM / NAND 二哥,DRAM|NAND|HBM3|LPDDR5,LPDDR4X/5|DDR4/5|HBM3|UFS,HBM3 主供 NVIDIA H100。
+Micron,Micron 美光,Memory,美国,博伊西,1978,micron.com,DRAM / NAND,DRAM|NAND|HBM|LPDDR5,LPDDR4X/5|DDR4/5|UFS3.1|HBM3E,
+Winbond,华邦电子 Winbond,Memory,中国台湾,中和,1987,winbond.com,利基 DRAM / NOR Flash,NOR Flash|SDRAM|LPDDR|SLC NAND,25Q NOR|LPDDR3 1Gb|SLC NAND,边缘 SoC 配套存储主力。
+Kioxia,铠侍 Kioxia,Memory,日本,东京,2017,kioxia.com,NAND Flash / eMMC,3D NAND|BiCS|UFS|eMMC,BiCS NAND|UFS3.1|eMMC5.1,原东芝存储。
+YMTC,长江存储 YMTC,Memory,中国大陆,武汉,2016,ymtc.com,国产 NAND Flash 龙头,Xtacking 3D NAND|UFS|eMMC|SSD 控制器,232 层 NAND|UFS3.1|PCIe SSD,全球领先的 Xtacking 架构。
+CXMT,长鑫存储 CXMT,Memory,中国大陆,合肥,2016,cxmt.com,国产 DRAM 龙头,DDR4|LPDDR4X|DDR5|LPDDR5,DDR4 8G|LPDDR4X 12G|DDR5 16G,中国大陆唯一量产 DRAM。
+GigaDevice,兆易创新 GigaDevice,Memory,中国大陆,北京,2005,gigadevice.com,NOR Flash / MCU / DRAM,NOR Flash|MCU (RISC-V/Cortex-M)|SLC NAND|DRAM,GD25 NOR|GD32 MCU|GD9F NAND,A 股（603986），与长鑫合作推 DDR。
+Ingenic,北京君正 Ingenic,Memory,中国大陆,北京,2005,ingenic.com,DRAM (收购 ISSI) + MCU,DRAM|SRAM|MCU|嵌入式 SoC,ISSI DDR3/4|君正 X1830 SoC,A 股（300223）。
+Dosilicon,东芯股份 Dosilicon,Memory,中国大陆,上海,2014,dosilicon.com,NAND/NOR/DRAM,SLC NAND|NOR|LPDDR,38nm SLC NAND|NOR Flash,A 股（688110）。
+Longsys,江波龙 Longsys,Memory,中国大陆,深圳,1999,longsys.com,成品存储（eMMC/UFS/SSD）,eMMC|UFS|SSD|车规存储,FORESEE eMMC|UFS2.2|PCIe SSD,A 股（301308），收购 Lexar。
+ASML,ASML,Equipment,荷兰,埃斯霍芬,1984,asml.com,EUV / DUV 光刻机,EUV|DUV|High-NA EUV,NXE:3800E|NXT:2050i|EXE:5000,全球垄断 EUV。
+NAURA,北方华创 NAURA,Equipment,中国大陆,北京,2001,naura.com,国产设备龙头,刷除|PVD|CVD|热处理|清洗,NMC 刷除|iTops PVD|HORIS 清洗,A 股（002371）。
+AMEC,中微公司 AMEC,Equipment,中国大陆,上海,2004,amec-inc.com,国产刷除设备,CCP 刷除|ICP 刷除|MOCVD,Primo SSC|Primo D-RIE|Prismo MOCVD,A 股（688012）。
+ACMR,盛美上海 ACM Research,Equipment,中国大陆,上海,1998,acmrcsh.com,清洗 / 镀铜,清洗 (SAPS/TEBO)|ECP 镀铜|活叉,Ultra C SAPS|Ultra ECP|Ultra Furnace,A 股（688082）。
+Hwatsing,华海清科 Hwatsing,Equipment,中国大陆,北京,2013,hwatsing.com,CMP 设备,CMP|减薄|后道设备,Universal-300 CMP|Universal-300 H,A 股（688120）。
+SMEE,上海微电子 SMEE,Equipment,中国大陆,上海,2002,smee.com.cn,国产光刻机,DUV 光刻机|面板光刻机,SSA600|SSA800|SSA/800-10W,未上市，战略能量。
+Piotech,拓荆科技 Piotech,Equipment,中国大陆,沈阳,2010,piotech.com,PECVD / ALD,PECVD|SACVD|HARP|ALD,PF-300T|TF-300T|PE-ALD,A 股（688072）。
+Rockchip,瑞芯微电子 Rockchip,Fabless,中国大陆,福州,2001,rock-chips.com,边缘 SoC / AIoT 头部,多媒体 SoC|AIoT SoC|车载产品|RKNN AI 框架,RK3566/RK3568|RK3576/RK3588|RK3308 语音|RV1126 IPC,本页主要对标厂。
+Allwinner,全志科技 Allwinner,Fabless,中国大陆,珠海,2007,allwinnertech.com,平板 / 边缘 SoC,Linux SoC|RTOS SoC|语音 / 视频 / IPC,T527|A523|V853|H618|D1 (RISC-V),A 股（300458）。
+Sigmastar,星宇股份 Sigmastar,Fabless,中国台湾/厦门,厦门,2017,sigmastar.com.tw,IPC / 智能仪表 SoC,IPC SoC 集成 DDR|智能门钟|智能屏|车载,SSD202D (集成 64MB DDR)|SSC30KQ|SSD20X,原 MStar IPC 事业独立的公司。
+Axera,爱芯元智 Axera,Fabless,中国大陆,上海,2019,axera-tech.com,智能视觉 / 边缘 AI SoC,NPU|ISP|车规 AI,AX620E|AX650N|AX8850 车规,
+Sophgo,算能科技 Sophgo,Fabless,中国大陆,北京,2017,sophgo.com,边缘 / 云 AI 加速,TPU|RISC-V CPU|SDK BMNN,BM1684X|BM1688|SG2042 (RISC-V),原 Bitmain AI 事业部。
+Horizon,地平线 Horizon,Fabless,中国大陆,北京,2015,horizon.cc,车规 AI SoC,BPU|车规 AI|ADAS,征程 3|征程 5|征程 6,
+Cambricon,寒武纪 Cambricon,Fabless,中国大陆,北京,2016,cambricon.com,AI 加速芯片,MLU|边缘 AI|云端 AI,MLU370|MLU290|思元 220,A 股（688256）。
+Amlogic,晶晨股份 Amlogic,Fabless,中国大陆,上海,1995,amlogic.com,机顶盒 / 智能屏 SoC,机顶盒 SoC|智能屏 SoC|语音 SoC,S905X4|S928X|A311D,A 股（688099）。
+Unisoc,紫光展锐 Unisoc,Fabless,中国大陆,上海,2001,unisoc.com,手机 / IoT / 边缘 SoC,5G 基带|LTE Cat-1/4|Wi-Fi/BT|平板 SoC,T606/T616|T820 5G|UWB510,
+HiSilicon,华为海思 HiSilicon,Fabless,中国大陆,深圳,2004,hisilicon.com,高端 SoC / IPC / 路由,手机 SoC (麦芒)|IPC SoC|路由 SoC|车规,鲲鹏 920|Hi3559A IPC|Hi3798M,机载 HarmonyOS。
