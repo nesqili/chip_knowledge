@@ -581,7 +581,40 @@ const SUPPLIERS = [
   {id:'Cambricon',name:'寒武纪 Cambricon',layer:'Fabless',region:'中国大陆',hq:'北京',founded:2016,website:'cambricon.com',role:'AI 加速芯片',capabilities:['MLU','边缘 AI','云端 AI'],products:['MLU370','MLU290','思元 220'],notes:'A 股＀688256）。'},
   {id:'Amlogic',name:'晶晨股份 Amlogic',layer:'Fabless',region:'中国大陆',hq:'上海',founded:1995,website:'amlogic.com',role:'机顶盒 / 智能屏 SoC',capabilities:['机顶盒 SoC','智能屏 SoC','语音 SoC'],products:['S905X4','S928X','A311D'],notes:'A 股＀688099）。'},
   {id:'Unisoc',name:'紫光展锐 Unisoc',layer:'Fabless',region:'中国大陆',hq:'上海',founded:2001,website:'unisoc.com',role:'手机 / IoT / 边缘 SoC',capabilities:['5G 基带','LTE Cat-1/4','Wi-Fi/BT','平板 SoC'],products:['T606/T616','T820 5G','UWB510'],notes:''},
-  {id:'HiSilicon',name:'华为海思 HiSilicon',layer:'Fabless',region:'中国大陆',hq:'深圳',founded:2004,website:'hisilicon.com',role:'高端 SoC / IPC / 路由',capabilities:['手机 SoC (麦芒)','IPC SoC','路由 SoC','车规'],products:['昆鹏 920','Hi3559A IPC','Hi3798M'],notes:'机载 HarmonyOS 。'}
+  {id:'HiSilicon',name:'华为海思 HiSilicon',layer:'Fabless',region:'中国大陆',hq:'深圳',founded:2004,website:'hisilicon.com',role:'高端 SoC / IPC / 路由',capabilities:['手机 SoC (麦芒)','IPC SoC','路由 SoC','车规'],products:['昆鹏 920','Hi3559A IPC','Hi3798M'],notes:'机载 HarmonyOS 。'},
+
+  {id:'SamsungMem',name:'三星半导体 Samsung Memory',layer:'Memory',region:'韩国',hq:'首尔',founded:1974,website:'samsung.com/semiconductor',role:'全球 DRAM/NAND 龙头',
+   capabilities:['DRAM','NAND','HBM3','LPDDR5X','UFS 4.0','GDDR7'],
+   products:['LPDDR5X','HBM3E','UFS 4.0','GDDR7','DDR5'],
+   notes:'全球最大存储厂商，份额~40%。'},
+  {id:'Kingston',name:'金士顿 Kingston',layer:'Memory',region:'美国',hq:'加州芳泉谷',founded:1987,website:'kingston.com',role:'全球最大内存模组/SSD 品牌',
+   capabilities:['DRAM 模组','SSD','企业SSD','嵌入式 eMMC'],
+   products:['ValueRAM','FURY','KC3000 SSD','eMMC'],
+   notes:'第三方模组龙头，市占~80%。'},
+  {id:'WesternDigital',name:'西部数据 WD',layer:'Memory',region:'美国',hq:'加州圣何塞',founded:1970,website:'westerndigital.com',role:'NAND/SSD/HDD 垂直整合',
+   capabilities:['3D NAND (BiCS)','SSD','HDD','企业存储'],
+   products:['WD Black SSD','SanDisk eMMC/UFS','Ultrastar'],
+   notes:'收购 SanDisk 和铠侠合资。'},
+  {id:'UniIC',name:'紫光国微 UniIC',layer:'Memory',region:'中国大陆',hq:'北京',founded:1998,website:'guoxin.com.cn',role:'国产 DRAM 设计 / 特种存储',
+   capabilities:['DRAM 控制器','特种 NAND','安全芯片','FPGA'],
+   products:['DDR3/DDR4 控制器','eMMC 控制器','安全存储'],
+   notes:'A 股(002049)，紫光集团旗下存储设计。'},
+  {id:'Biwin',name:'佰维存储 Biwin',layer:'Memory',region:'中国大陆',hq:'深圳',founded:1995,website:'biwin.com.cn',role:'嵌入式存储 / 消费 SSD',
+   capabilities:['eMMC','UFS','LPDDR','SSD','工规存储'],
+   products:['eMMC 5.1','UFS 2.2/3.1','LPDDR4X','NVMe SSD'],
+   notes:'A 股(688525)，国产嵌入式存储主力。'},
+  {id:'KingBank',name:'金百达 KingBank',layer:'Memory',region:'中国大陆',hq:'深圳',founded:2003,website:'kingbank.com.cn',role:'国产 DRAM 模组 / SSD',
+   capabilities:['DDR4/DDR5 模组','NVMe SSD','SATA SSD'],
+   products:['DDR5 UDIMM','NVMe M.2 SSD','SATA SSD'],
+   notes:'国产模组品牌，主打性价比。'},
+  {id:'Macronix',name:'旺宏电子 Macronix',layer:'Memory',region:'中国台湾',hq:'新竹',founded:1989,website:'macronix.com',role:'全球 NOR Flash 龙头之一',
+   capabilities:['NOR Flash','SLC NAND','ROM','eMMC'],
+   products:['MX25L NOR','MX30LF SLC NAND','MX eMMC'],
+   notes:'台股(2337)，车规/工规 NOR 主力。'},
+  {id:'CypressIFX',name:'英飞凌/赛普拉斯 Infineon/Cypress',layer:'Memory',region:'德国/美国',hq:'慕尼黑/圣何塞',founded:1999,website:'infineon.com',role:'车规 NOR Flash / SRAM / FRAM',
+   capabilities:['车规 NOR Flash','SRAM','FRAM','nvSRAM'],
+   products:['Semper NOR Flash','HyperRAM','FRAM'],
+   notes:'英飞凌 2020 收购 Cypress，车规存储领先。'},
 ];
 
 const TARGET_CHIPS = {
@@ -642,9 +675,12 @@ const GLOSSARY = [
   {term:'Wafer bank',def:'晶圆银行，已完成前道但未封装的晶圆库存，用来缩短交期。'}
 ];
 
+const LAYER_DETAILS = {IP:{title:"IP（知识产权核）— CPU/GPU/NPU 设计授权",summary:"IP（Intellectual Property）是芯片设计中的\"乐高积木\"——设计公司从 IP 厂商获得 CPU 核、GPU 核、接口控制器等授权，集成到自己的 SoC 中。IP 费用通常包含前期授权费（License Fee）和量产版税（Royalty，按颗计）。",sections:[{heading:"IP 类型与典型供应商",type:"table",headers:["IP 类型","说明","典型供应商","收费模式"],rows:[["CPU IP","Arm Cortex-A/R/M 系列，RISC-V 生态兴起","Arm, SiFive, Andes, 平头哥","License + Royalty（~1-3%/颗）"],["GPU IP","移动/嵌入式 GPU 核","Arm (Mali), Imagination (PowerVR), VeriSilicon (Vivante)","License + Royalty"],["NPU IP","AI 加速器 IP","Arm (Ethos), VeriSilicon (VIP), Ceva, 寒武纪","License + Royalty，或按 TOPS 计"],["DSP IP","音频/视觉/通信 DSP","Cadence (Tensilica), Ceva, Synopsys (ARC)","License + Royalty"],["接口 IP","USB/PCIe/DDR/MIPI/HDMI 等","Synopsys (DesignWare), Cadence, Alphawave, Innosilicon","License + Royalty，PHY 贵于 Controller"],["安全 IP","加解密引擎、安全启动","Arm (TrustZone), Rambus, Intrinsic ID","License + Royalty"],["总线/互联 IP","片上互联 (NoC/AMBA)","Arteris, Arm (CoreLink), NetSpeed","License + Royalty"]]},{heading:"Arm 版税结构（边缘 SoC 最常见模式）",type:"bullets",items:["架构授权（Architecture License）：一次性费用，数千美元到数百万美元不等，允许自定义 CPU 核（如苹果、高通）。","核心授权（Core License）：按 CPU/GPU 核型号授权，前期费用+量产版税。Cortex-A55 量级核心授权费约数十万美元。","版税（Royalty）：每颗芯片出厂价的 1-3%。RK3566 量级 ~$0.3/颗，RK3588 量级 ~$1.5/颗。","Mali GPU 附加：GPU 核单独计费，版税叠加。","Popcorn 优惠：Arm Total Access 订阅制，年费覆盖多种 IP，适合多产品线公司。"]},{heading:"IP 选择关键考量",type:"bullets",items:["生态成熟度：Arm 生态最完善（工具链、OS 支持、开发者社区），RISC-V 成长快但生态仍在建设。","性能/功耗/面积 (PPA)：同等工艺下不同 IP 核的 PPA 差异明显，需根据应用场景选型。","授权成本：前期费用 vs 版税 vs 总拥有成本，需结合预期销量计算。量大时前期费摊销薄，选高 License 低 Royalty 方案；量小时反之。","地缘政治：美国出口管制 (EAR) 限制某些 IP 对中国企业的授权，RISC-V 开源架构有地缘优势。","技术支持质量：IP 厂商提供的集成支持、验证环境、驱动 SDK 完善度。"]},{heading:"RISC-V vs Arm 对比",type:"matrix",headers:["维度","Arm","RISC-V"],rows:[["指令集","私有，Arm 公司所有","开源免费，RISC-V International 维护"],["生态成熟度","★★★★★ 极完善","★★★☆☆ 快速发展中"],["授权模式","License + Royalty","开源，无需授权费，可自研核"],["定制能力","架构授权才可深度定制","天然支持扩展指令"],["工具链","Keil/DS-5/GCC/LLVM 完善","GCC/LLVM 已支持，IDE 追赶中"],["地缘风险","受美国/英国出口管制约束","开源不受管制（但实现 IP 可能有出口限制）"],["典型芯片","RK3566/RK3588、手机 SoC、车规 MCU","全志 D1、算能 SG2042、平头哥 玄铁"]]}]},EDA:{title:"EDA（电子设计自动化）— 芯片设计工具链",summary:"EDA 工具是芯片设计的\"CAD 软件\"——从前端 RTL 设计、逻辑综合、布局布线、物理验证到签核（Sign-off），覆盖全流程。全球 EDA 市场由 Synopsys、Cadence、Siemens EDA 三家主导（合占 ~75%），国产 EDA 在模拟和验证领域快速追赶。",sections:[{heading:"EDA 工具链全景",type:"table",headers:["阶段","任务","代表工具","主要厂商"],rows:[["前端设计","RTL 编写与仿真","VCS, Xcelium, Questa","Synopsys, Cadence, Siemens"],["逻辑综合","RTL→门级网表","Design Compiler, Genus","Synopsys, Cadence"],["DFT","可测试性设计","TetraMAX, Modus","Synopsys, Cadence"],["布局布线","门级网表→物理版图","IC Compiler II, Innovus","Synopsys, Cadence"],["物理验证","DRC/LVS 检查","Calibre, IC Validator","Siemens, Synopsys"],["寄生提取","RC 寄生参数提取","StarRC, Quantus","Synopsys, Cadence"],["静态时序分析","时序签核","PrimeTime, Tempus","Synopsys, Cadence"],["功耗分析","功耗估算与优化","PrimePower, Voltus","Synopsys, Cadence"],["模拟/混合信号","模拟 IC 设计仿真","Virtuoso, Custom Compiler","Cadence, Synopsys"],["仿真加速","大型设计硬件仿真","Palladium, ZeBu","Cadence, Synopsys"],["形式验证","等价性/属性检查","Formality, JasperGold","Synopsys, Cadence"],["PCB/封装","板级与封装设计","Allegro, Xpedition","Cadence, Siemens"]]},{heading:"EDA 商业模式",type:"bullets",items:["年度订阅（Subscription）：主流模式，按 seat/年收费，单工具年费从数千到数十万美元。","Token 制：按并行任务消耗 Token 计费，适合高峰期需要大量计算资源的企业。","全流程打包：三大家均提供\"全流程套件\"折扣，比单独购买便宜 30-50%。","云上 EDA：Synopsys Cloud / Cadence Cloud，按使用时长计费，降低中小企业的前期投入。","典型费用：一个 22nm 边缘 SoC 项目的 EDA 工具年度费用约 $500K-1.5M/年（含综合/布局布线/签核），分摊到每颗芯片就是 NRE 的一部分。"]},{heading:"国产 EDA 格局",type:"table",headers:["厂商","优势领域","代表产品","上市情况"],rows:[["华大九天 (Empyrean)","模拟全流程 / 面板设计","ALPS (仿真), Aether (版图)","A 股 688150"],["概伦电子 (Primarius)","器件建模 / SPICE 仿真","NanoSpice, BSIMProPlus","A 股 688206"],["芯华章 (X-EPIC)","数字验证","GalaxSim, GalaxFV","未上市"],["广立微 (Semitronix)","良率分析 / 测试芯片","DataExp, TCM","A 股 68835x"],["国微集团 (SMIT)","EDA 全流程","鸿鹄系列","未上市"],["鸿芯微纳","数字后端 / 布局布线","Aguda","未上市"]]},{heading:"为什么 EDA 这么贵？",type:"bullets",items:["研发投入巨大：Synopsys 年研发投入超 $1.5B，持续优化算法支持最新工艺节点。","工艺复杂度递增：3nm 规则数是 28nm 的 10 倍+，工具需处理海量设计规则。","Foundry 认证：每种工艺 PDK 都需 EDA 工具通过代工厂认证，壁垒极高。","人才稀缺：EDA 需要兼具 CS/EE/物理/数学背景的复合型工程师，全球仅数万人。","切换成本高：设计流程与 EDA 工深深绑定，迁移风险大，形成强锁定效应。"]}]},"EDA/IP":{title:"EDA + IP 综合厂商 — Synopsys & Cadence",summary:"Synopsys 和 Cadence 是仅有两家同时提供 EDA 工具和 IP 核的公司。这种\"工具+IP\"捆绑模式形成强大生态壁垒：设计公司用他们的 EDA 工具做芯片，同时购买他们的接口 IP（USB/PCIe/DDR），IP 已针对自家工具优化验证。",sections:[{heading:"Synopsys vs Cadence 全景对比",type:"matrix",headers:["维度","Synopsys (新思)","Cadence (楷登)"],rows:[["成立","1986，总部美国加州 Mountain View","1988，总部美国加州 San Jose"],["FY2024 营收","~$6.5B","~$4.2B"],["EDA 强项","逻辑综合 (DC)、物理实现 (ICC2)、STA (PT)、仿真 (VCS)","模拟仿真 (Spectre/Virtuoso)、PCB (Allegro)、硬件加速 (Palladium)"],["IP 强项","DesignWare (接口 IP 全球第一)、ARC 处理器","Tensilica DSP、Denali 存储器 IP"],["AI 战略","Synopsys.ai：AI 驱动设计优化 (DSO.ai)","Cadence.AI：JedAI, Cerebrus"],["中国市场","中国营收占比 ~15-18%，积极适配国产工艺","中国营收占比 ~15%，Tensilica DSP 广泛用于国产芯片"]]},{heading:"DesignWare 接口 IP 产品线 (Synopsys)",type:"table",headers:["接口类型","最高速率","工艺支持","应用场景"],rows:[["USB4 / USB 3.2","40 Gbps","N7~N3","PC、手机、扩展坞"],["PCIe 6.0 / 5.0","64 GT/s","N5~N3","服务器、AI 加速器、SSD"],["DDR5 / LPDDR5X","9600 Mbps","N7~N3","手机、PC、边缘 AI"],["HBM3 / HBM3E","9.6 Gbps/pin","N5~N3","AI 训练芯片、HPC"],["MIPI DSI/CSI","4.5 Gbps/lane","N7~N3","手机摄像头/显示屏"],["HDMI 2.1","48 Gbps","N7~N3","TV、机顶盒、显示器"],["Ethernet 800G","112 Gbps SerDes","N5~N3","数据中心交换机"]]},{heading:"为什么它们能同时做 EDA + IP？",type:"bullets",items:["协同验证优势：自有 IP 在自有 EDA 工具中已经过充分验证，客户集成风险低。","PPA 优化：IP 实现针对自有综合/布局布线工具做了专门优化。","一站式采购：芯片公司可同时谈 EDA License + IP License，获得打包折扣。","Foundry 绑定：DesignWare IP 已在 TSMC/Samsung 等主流工艺上 silicon-proven。","竞争壁垒：新进入者很难同时攻克 EDA 工具和 IP 两个高壁垒市场。"]}]},Foundry:{title:"晶圆代工 (Foundry) — 芯片制造的\"印刷厂\"",summary:"晶圆代工厂（Foundry）是芯片制造的核心环节。Fabless 设计公司完成设计后，将 GDS（版图文件）交付给代工厂，在硅片上通过光刻、刻蚀、沉积、掺杂等数百道工序制造芯片。TSMC 是全球绝对龙头（份额 ~60%），Samsung 和 Intel 追赶中，SMIC 是大陆最大代工厂。",sections:[{heading:"主要代工厂工艺节点对比",type:"table",headers:["代工厂","最先进量产节点","成熟节点","特色工艺","主要客户"],rows:[["TSMC (台积电)","N3E (3nm)","N7, N6, N5/N4P, 16FFC, 22ULL, 28HPC+","车规 N5A, RF, CIS, 嵌入式","Apple, NVIDIA, AMD, Qualcomm, 瑞芯微"],["Samsung Foundry","3GAE (GAA 3nm)","SF5, SF4, 8LPP, 14LPP","MRAM, 嵌入式, RF","Samsung LSI, NVIDIA (部分), Google Tensor"],["Intel Foundry","Intel 3 / 18A","Intel 4, Intel 7","EMIB, Foveros 先进封装","Intel 自身, 外部客户逐步导入"],["SMIC (中芯国际)","14nm FinFET (受限)","28HKC+, 22ULL, 55/40nm","BCD, 嵌入式 Flash, CIS","华为海思, 紫光展锐, 全志, 瑞芯微"],["UMC (联电)","22nm","28nm, 40nm, 55nm, 90nm","BCD, 嵌入式 Flash, HV","MediaTek, Realtek, 全志"],["GlobalFoundries","12nm LP","22FDX (FD-SOI), 28nm, 55nm","FD-SOI, 硅光子, GaN","AMD (历史), 车规/工规客户"],["HHGrace (华虹)","28nm","55/40nm","BCD, eFlash, 功率器件","电源管理, MCU, 车规"]]},{heading:"工艺选择关键参数",type:"bullets",items:["节点 (Node)：晶体管特征尺寸，28nm→22nm→12nm→8nm→6nm→3nm，越先进性能越高但成本也越高。","晶圆尺寸：主流 300mm (12 英寸)，成熟工艺也有 200mm (8 英寸)。300mm 每片产 Die 数更多。","晶圆价格：28nm ~$2,000-3,000/片，22nm ~$2,500/片，12nm ~$4,500/片，8nm ~$6,500/片，5nm ~$16,000/片。","MPW (多项目晶圆)：多个设计拼一片晶圆，分摊光罩和晶圆成本，适合原型验证和小批量。","产能保障：热门节点需提前锁定产能（Capacity Reservation），尤其是车规/工规芯片。","地缘风险：美国出口管制限制先进工艺设备对华出口，SMIC 的 14nm 以下扩产受限。"]},{heading:"22nm ULL vs 8nm LPP 成本对比（12 英寸晶圆）",type:"matrix",headers:["参数","22nm ULL (SMIC/UMC)","8nm LPP (Samsung)"],rows:[["晶圆单价","~$2,500","~$6,500"],["掩膜费用","~$1.5M","~$12M"],["典型 Die 面积","~60 mm² (RK3566)","~110 mm² (RK3588)"],["DPW (300mm 晶圆)","~1,050 颗","~540 颗"],["典型良率","~92% (成熟节点)","~85% (仍较低)"],["单颗 Die 成本","~$2.5-3.0","~$13-15"],["适合场景","中低端边缘 AIoT、平板、盒子","高端边缘 AI、NAS、8K 视频"]]}]},Mask:{title:"光罩/掩膜版 (Photomask) — 芯片制造的\"底片\"",summary:"光罩（又称掩膜版、Mask/Reticle）是光刻工艺中的\"照片底片\"——电路图案通过光罩投影到晶圆上。一套先进工艺的光罩组（Mask Set）包含数十层（每一层对应一道光刻工序），总价可达数百万至数千万美元，是 NRE 费用中最大单项。",sections:[{heading:"光罩基础知识",type:"table",headers:["概念","说明"],rows:[["Mask / Reticle","光罩，承载一层电路图案的石英板，表面镀铬形成遮光图案。"],["Mask Set","一套光罩组。28nm 约 40-50 层，7nm 约 80+ 层，3nm 超 100 层。"],["Reticle Size","光罩尺寸。DUV 通常为 6 英寸×6 英寸（约 152mm），EUV 为 6 英寸。"],["OPC (光学邻近修正)","对光罩图案做预畸变，补偿光刻衍射效应，提升精度。"],["PSM (相移光罩)","利用光相位干涉提高分辨率，成本是普通光罩的 2-3 倍。"],["EUV Mask","极紫外光罩，反射式（DUV 为透射式），多层 Mo/Si 反射膜，制造难度极高。"]]},{heading:"不同工艺节点的光罩成本",type:"table",headers:["工艺节点","层数（约）","Mask Set 总价（USD）","单层均价"],rows:[["90nm","30-35 层","$300K-500K","~$12K/层"],["65nm","35-40 层","$500K-800K","~$17K/层"],["40/45nm","40-45 层","$800K-1.5M","~$25K/层"],["28nm","45-50 层","$1.5M-3M","~$40K/层"],["22nm","50-55 层","$1.5M-2.5M","~$40K/层"],["12/14nm","55-65 层","$5M-8M","~$100K/层"],["7/8nm","65-75 层","$10M-15M","~$170K/层"],["5nm","75-85 层","$15M-25M","~$230K/层"],["3nm","85-100+ 层","$25M-50M+","~$350K+/层"]]},{heading:"光罩产业链",type:"bullets",items:["光罩制造厂（Mask Shop）：Photronics (美国), DNP/大日本印刷 (日本), Toppan/凸版印刷 (日本) 三大家主导。","代工厂自营 Mask Shop：TSMC、Intel、Samsung 都有内部光罩厂，用于先进工艺。","光罩设备：光罩写入（EBL，电子束光刻机）由 NuFlare、JEOL 供应；检测设备由 KLA、Lasertec（EUV 检测龙头）供应。","光罩基板（Mask Blank）：石英基板+铬膜+光刻胶，主要由 HOYA、AGC 供应。EUV Mask Blank 更有 40+ 层 Mo/Si 反射膜，制造难度极高。","国产进展：清溢光电、路维光电可供应 28nm/250nm 以上光罩，先进节点光罩仍依赖进口。"]}]},Wafer:{title:"硅片 (Silicon Wafer) — 芯片的\"地基\"",summary:"硅片（Wafer）是晶圆制造的基础材料，从多晶硅提纯→拉单晶（CZ 法）→切割→研磨→抛光→外延（可选）制成。全球硅片市场由日本信越化学和 SUMCO 主导（合计 ~55%），台湾环球晶圆第三。12 英寸（300mm）是先进工艺主流，8 英寸用于成熟工艺和特色芯片。",sections:[{heading:"硅片类型",type:"table",headers:["类型","说明","典型用途","溢价"],rows:[["抛光片 (Polished)","基础硅片，CMP 抛光表面","Logic/DRAM 大多数层","基准价"],["外延片 (EPI)","在抛光片上生长单晶外延层","模拟/功率/高压 IC","+30~60%"],["SOI (Silicon-On-Insulator)","埋氧化层隔离，减少漏电","RF/低功耗/耐辐射","+100~200%"],["退火片 (Annealed)","高温退火消除缺陷","高端 CIS 图像传感器","+20~40%"]]},{heading:"12 英寸 vs 8 英寸 vs 6 英寸",type:"matrix",headers:["参数","300mm (12 英寸)","200mm (8 英寸)","150mm (6 英寸)"],rows:[["面积比","1× (基准)","2.25× 面积 → 1片12寸=2.25片8寸","4×"],["主流工艺","28nm 及以下先进工艺","90nm-0.13μm 成熟工艺","0.18μm+ 特色工艺"],["硅片单价","~$100-200/片","~$40-80/片","~$20-35/片"],["产能","紧缺（先进工艺需求大）","供需均衡","逐步萎缩"],["主要应用","手机 SoC、CPU、GPU、AI","电源 IC、MCU、CIS、MEMS","功率器件、传感器"]]},{heading:"硅片成本因素",type:"bullets",items:["多晶硅原料：从冶金级硅→西门子法提纯至 9N-11N（99.9999999%-99.999999999%），电子级多晶硅占硅片成本 ~30%。","拉晶 (Crystal Pulling)：CZ 法拉制单晶硅锭（Ingot），耗时 2-3 天/根，直径越大难度越大。","切割与研磨：线切割成片→双面研磨→边缘倒角→CMP 抛光，多道工序。","外延工艺：如需 EPI 层，在表面生长数 μm 单晶硅（CVD 工艺），增加成本。","检测分选：激光/光学检测缺陷 (COP, BMD, 位错)，按质量等级分选 Bin1/Bin2/Bin3。"]},{heading:"全球硅片格局",type:"table",headers:["厂商","国别","全球份额","产品特色"],rows:[["信越化学 (Shin-Etsu)","日本","~30%","300mm 抛光/EPI/SOI 全品类"],["SUMCO","日本","~25%","300mm 抛光/EPI 高质量"],["环球晶圆 (GlobalWafers)","中国台湾","~17%","收购 Siltronic (德国) 后跃居第三"],["Siltronic","德国","~13%","被环球晶圆收购，300mm 主力"],["SK Siltron","韩国","~10%","SK 集团旗下，服务三星/SK Hynix"],["沪硅产业 (NSIG)","中国大陆","~3%","国产 300mm 硅片龙头，SOI 领先"],["立昂微 (SinoWafer)","中国大陆","~2%","8-12 寸抛光/外延片"]]}]},OSAT:{title:"封装测试 (OSAT) — 芯片的\"包装与体检\"",summary:"OSAT（Outsourced Semiconductor Assembly and Test）是芯片封装和测试的外包服务商。Fabless 公司将代工厂生产的晶圆交给 OSAT 进行划片（Dicing）、贴片（Die Bonding）、引线键合（Wire Bonding）/倒装（Flip Chip）、注塑、植球、测试等工序。全球 OSAT 龙头是日月光（ASE），大陆龙头是长电科技（JCET）。",sections:[{heading:"主要封装形式对比（边缘 SoC 常用）",type:"table",headers:["封装形式","说明","典型 Pin 数","封装单价","适用芯片"],rows:[["QFN (Quad Flat No-lead)","无引线四方扁平封装，底面露焊盘","16-88","$0.15-0.50","MCU、电源 IC、WiFi/BT"],["LFBGA (Low-profile Fine-pitch BGA)","薄型细间距球栅阵列","100-400","$0.40-1.00","RK3566、平板 SoC、中低端 AP"],["FCBGA (Flip-Chip BGA)","倒装芯片 BGA，高性能/高功耗","400-2,000+","$1.50-5.00","RK3588、手机 AP、AI 加速器"],["SiP (System-in-Package)","系统级封装，多芯片集成","视集成度","$1.00-10.00","智能手表、TWS 耳机、IoT 模组"],["WLCSP (Wafer-Level CSP)","晶圆级芯片级封装，最小尺寸","4-50","$0.10-0.40","CIS 传感器、小型传感器"],["MCM (Multi-Chip Module)","多芯片模块，2.5D/3D 堆叠","视规模","$5.00-100+","HBM+GPU、AI 训练芯片"]]},{heading:"封装工艺流程",type:"bullets",items:["晶圆减薄 (Back-grinding)：将晶圆从 ~780μm 减薄至 ~100-200μm，满足薄型封装需求。","划片 (Dicing)：用金刚石刀片或激光将晶圆切割成单颗 Die。","贴片 (Die Attach)：将 Die 用银浆/焊料/DAF 粘贴到基板或引线框上。","引线键合 (Wire Bonding) 或 倒装 (Flip Chip)：WB 用金线/铜线连接 Die→基板；FC 用焊球直接倒装。","注塑 (Molding)：环氧树脂注塑包封，保护芯片。","植球 (Ball Mount)：BGA 封装需在底面植锡球阵列。","打标 (Marking)：激光打标型号/批次/日期码。","切单 (Singulation)：将连片切分为单颗成品。"]},{heading:"全球主要 OSAT 厂商",type:"table",headers:["厂商","地区","2023 营收","强项"],rows:[["日月光 (ASE)","中国台湾","~$20B","FCBGA, SiP, 车规封装，全球第一"],["安靠 (Amkor)","美国/韩国","~$6.5B","先进封装, MCM, Chiplet"],["长电科技 (JCET)","中国大陆","~$4-5B","FCBGA, XDFOI 2.5D, SiP, 含星科金朋"],["通富微电 (Tongfu)","中国大陆","~$3B","FCBGA, AMD 主力封装伙伴"],["力成 (PTI)","中国台湾","~$2.5B","存储封装, SiP"],["华天科技 (HuaTian)","中国大陆","~$2B","QFN, FCBGA, SiP, MEMS"],["晶方科技 (China WLCSP)","中国大陆","~$0.5B","CIS WLCSP 专家, 12 寸 TSV"]]}]},Substrate:{title:"封装基板 (IC Substrate) — 芯片的\"PCB 微型版\"",summary:"封装基板（Package Substrate）是连接芯片 Die 与 PCB 主板之间的\"微型电路板\"。它为 Die 提供机械支撑、电气连接和散热路径。基板按材料分为 BT（Bismaleimide Triazine，成本低但高频性能差）和 ABF（Ajinomoto Build-up Film，适合细线路/高速信号）。FCBGA 封装是基板消耗最大的品类。",sections:[{heading:"基板类型对比",type:"table",headers:["类型","材料","最小线宽/间距","层数","适用封装","相对成本"],rows:[["BT 基板","BT 树脂+玻纤","~15/15μm","2-6 层","LFBGA、QFN、MEMS","1×（基准）"],["ABF 基板 (标准)","ABF 膜层+铜","~8/8μm","6-12 层","FCBGA (中端)","3-5×"],["ABF 基板 (高端)","ABF 膜层+铜","~5/5μm","12-20 层","FCBGA (高端/大尺寸)","8-15×"],["MIS 基板","模塑互连基板","~20/20μm","2-4 层","QFN, SiP, 功率封装","0.5-1×"],["陶瓷基板","Al₂O₃/AlN 陶瓷","~50/50μm","多层","RF/微波、高可靠封装","5-20×"],["硅中介层 (Interposer)","硅晶圆","~0.4/0.4μm","单层+TSV","2.5D Chiplet (HBM+GPU)","50-200×"]]},{heading:"ABF 基板：为什么是瓶颈？",type:"bullets",items:["ABF 材料由味之素 (Ajinomoto) 独家供应，全球仅此一家。虽然味之素持续扩产，但需求增长更快。","ABF 基板产能集中在日本（Ibiden、Shinko）和台湾（Unimicron、Kinsus、Nan Ya），大陆刚起步。","大尺寸 FCBGA 基板（>70mm×70mm）制造难度极高：翘曲控制、细线路良率、层间对位精度。","AI/GPU 芯片（NVIDIA H100/B200 等）大量消耗高端 ABF 基板产能，挤压边缘 SoC 供给。","国产替代：深南电路 (SCC)、兴森科技 (Fastprint)、珠海越亚 (Access) 正在建设 ABF 基板产线，目前以 BT 为主。"]},{heading:"基板成本驱动因素",type:"bullets",items:["层数（Layer Count）：FCBGA 基板 6-20 层，每增 2 层成本增 20-40%。","尺寸（Body Size）：大尺寸基板制造难度和材料消耗均增大，成本非线性增长。","线宽/间距（L/S）：细线路需要更贵的 ABF 膜和更先进的光刻/激光钻孔设备。","材料选择：ABF vs BT 成本差 3-5×；Low-CTE 芯板、低损耗介质推高材料成本。","良率：大面积基板翘曲/分层缺陷导致良率下降，成熟产品良率 85-95%，新产品可能低于 70%。"]}]},ATE:{title:"ATE（自动化测试设备）— 芯片质量的\"守门员\"",summary:"ATE（Automated Test Equipment）是芯片测试的专用设备。每颗芯片在晶圆阶段（CP，Chip Probe）和成品阶段（FT，Final Test）都需要通过 ATE 测试电性能、功能、时序、功耗等。全球 ATE 市场由 Teradyne 和 Advantest 双寡头主导（合计 ~70%），国产长川科技和华峰测控在模拟/功率测试领域快速追赶。",sections:[{heading:"ATE 测试类型与设备",type:"table",headers:["测试类型","阶段","测试内容","代表设备","机时单价"],rows:[["CP (Chip Probe)","晶圆级, 封装前","Die 基本功能/电性筛选","探针台 + ATE","$0.05-0.30/颗"],["FT (Final Test)","封装后, 成品","全功能/全参数/全温度测试","Handler + ATE","$0.10-0.80/颗"],["SLT (System-Level Test)","成品级","跑真实应用场景 (如安卓启动)","SLT 平台","$0.50-3.00/颗"],["Burn-in (老化)","成品级","高温高压加速老化筛缺陷","老化炉","$0.20-1.00/颗"],["ATE 机时费","通用","按秒计费","—","$100-400/小时"]]},{heading:"Teradyne vs Advantest",type:"matrix",headers:["维度","Teradyne (泰瑞达)","Advantest (爱德万)"],rows:[["总部","美国马萨诸塞州","日本东京"],["2023 营收","~$2.7B","~$3.5B"],["SoC 测试主力","UltraFLEX 系列","V93000 系列"],["存储测试主力","Magnum 系列","T5851/T5833 系列"],["强项","SoC 测试、模拟测试","存储测试、HBM 测试"],["中国市场","受限出口管制","部分高端受限"]]},{heading:"测试成本构成",type:"bullets",items:["测试时间：SoC 测试时间从数秒到数分钟不等。高端芯片测试项多、时间长。","机台折旧：一台 V93000 约 $1-2M，5 年折旧，每小时成本 $50-100。","Handler/Prober：自动化上下料设备，$100K-500K/台。","Load Board / Probe Card：每款芯片定制的测试接口板，$10K-100K+。","测试厂人工/厂房：洁净室环境，工程师编写和调试测试程序。","并行测试 (Multi-site)：同时测 2/4/8/16 颗，成倍降低单颗测试时间。"]}]},Memory:{title:"存储芯片 (Memory) — DRAM / NAND / NOR",summary:"存储芯片是边缘 SoC 最重要的配套器件之一。DRAM（内存）提供系统运行内存，NAND Flash/eMMC/UFS 提供持久存储，NOR Flash 用于代码存储（XIP，就地执行）。存储芯片通常与 SoC 在同一 PCB 上，由 OEM/方案商采购配套，不在 SoC 本身的封装内（SiP 除外）。",sections:[{heading:"存储类型对比",type:"table",headers:["类型","容量范围","速度","用途","典型单价"],rows:[["LPDDR4X","1-8 GB","4266 Mbps","手机/平板/边缘 AI 运行内存","$3-15/颗"],["LPDDR5/5X","4-16 GB","6400-8533 Mbps","旗舰手机/AI 加速器运行内存","$8-30/颗"],["DDR4","2-16 GB","3200 Mbps","工控/PC/NAS 运行内存","$5-20/颗"],["eMMC 5.1","8-256 GB","~400 MB/s","平板/盒子/工控持久存储","$3-20/颗"],["UFS 2.2/3.1","64-512 GB","~2 GB/s","高端平板/手机持久存储","$8-40/颗"],["NOR Flash","1-512 Mb","~100 MB/s (读)","代码存储 (XIP)、启动固件","$0.10-2.00/颗"],["SLC NAND","1-8 Gb","~40 MB/s","工控/车规代码+数据存储","$0.50-3.00/颗"]]},{heading:"存储市场格局",type:"table",headers:["领域","全球龙头","中国大陆代表"],rows:[["DRAM","Samsung (~40%), SK Hynix (~30%), Micron (~25%)","CXMT (长鑫存储) - 已量产 DDR4/LPDDR4X"],["NAND Flash","Samsung, Kioxia, WD/SanDisk, SK Hynix, Micron","YMTC (长江存储) - 232 层 Xtacking 领先"],["NOR Flash","Winbond, Macronix, GigaDevice, Infineon/Cypress","GigaDevice (兆易创新) - 全球 Top 3"],["eMMC/UFS/SSD 模组","Samsung, WD/SanDisk, Kingston","Longsys (江波龙), Biwin (佰维), Kimtigo"]]},{heading:"边缘 SoC 存储选型建议",type:"bullets",items:["成本敏感型（如 RK3566 平板/盒子）：LPDDR4X 2-4GB + eMMC 5.1 32-64GB，存储总成本 ~$8-12。","性能型（如 RK3588 边缘 AI）：LPDDR5 8-16GB + UFS 3.1 128-256GB，存储总成本 ~$30-60。","工控/车规：DDR4 + SLC NAND/NOR Flash（高可靠性/宽温），车规分级存储溢价 50-200%。","AI 推理：大模型推理需要大容量 LPDDR5（8GB+），bandwidth 是关键瓶颈。","国产化要求：DRAM→CXMT，NAND→YMTC，NOR→GigaDevice，eMMC→Longsys/Biwin。"]}]},Equipment:{title:"前道设备 (Equipment) — 芯片制造的工具链",summary:"半导体前道设备（Wafer Fab Equipment, WFE）是晶圆制造中使用的各种工艺设备。从光刻、刻蚀、沉积到检测，每条产线需要数百台设备，投资动辄数十亿至数百亿美元。ASML 垄断 EUV 光刻机，应用材料 (AMAT) 和 Lam Research 主导刻蚀/沉积，KLA 主导检测。国产设备在刻蚀/清洗/CMP 等领域快速突破。",sections:[{heading:"前道设备分类与龙头",type:"table",headers:["设备类型","作用","全球龙头","国产代表","国产化率"],rows:[["光刻 (Lithography)","将电路图案转移到晶圆上","ASML (EUV/DUV), Nikon, Canon","SMEE (上海微电子)","<5%（先进节点）"],["刻蚀 (Etch)","去除材料，形成电路结构","Lam Research, AMAT, TEL","AMEC (中微), NAURA","~20-25%"],["沉积 (Deposition)","在晶圆上生长薄膜 (CVD/PVD/ALD)","AMAT, Lam, TEL","NAURA, Piotech (拓荆)","~15-20%"],["CMP (化学机械抛光)","平坦化晶圆表面","AMAT, Ebara","Hwatsing (华海清科)","~20-25%"],["清洗 (Cleaning)","去除颗粒/污染物","SCREEN, TEL, Lam","ACMR (盛美), NAURA","~25-30%"],["离子注入 (Implant)","掺杂杂质改变电性","AMAT, Axcelis","NAURA, CETC 48 所","~10-15%"],["检测 (Inspection/Metrology)","缺陷检测/量测","KLA, AMAT, Onto","中科飞测, 上海精测","~10-15%"],["热处理 (Thermal)","退火/氧化/扩散","TEL, Kokusai, AMAT","NAURA, ACMR","~20-25%"]]},{heading:"ASML 光刻机全家福",type:"table",headers:["型号","类型","光源波长","分辨率","产能 (WPH)","单价 (USD)"],rows:[["EXE:5000/5200","High-NA EUV","13.5 nm","8 nm","~185","~$350-400M"],["NXE:3800E","EUV (0.33 NA)","13.5 nm","13 nm","~220","~$180-200M"],["NXT:2100i","DUV 浸没式 (ArFi)","193 nm","38 nm","~295","~$65-80M"],["NXT:2050i","DUV 浸没式 (ArFi)","193 nm","40 nm","~295","~$55-70M"],["NXT:870","DUV 干式 (ArF)","193 nm","~65 nm","~330","~$30-40M"]]},{heading:"设备采购成本（月产 40K 片的先进逻辑产线）",type:"bullets",items:["光刻区域：~20-25 台扫描光刻机 + 配套涂胶显影 (TEL/SCREEN Track)，占设备总投资的 ~25-30%。","刻蚀区域：~150-200 台刻蚀机（介质/硅/金属刻蚀各类型），占设备总投资的 ~20-25%。","沉积区域：~120-160 台 CVD/PVD/ALD 设备，占设备总投资的 ~15-20%。","量测/检测：~80-120 台各类量测检测设备，占设备总投资的 ~10-15%。","CMP/清洗/注入/热处理等其他设备：占设备总投资的 ~15-20%。","一条月产 40K 片 7nm 逻辑产线的设备投资约 $15-20B（不含厂房/洁净室）。"]}]},Fabless:{title:"Fabless（无晶圆厂设计公司）— 芯片的\"设计师\"",summary:"Fabless 是指只做芯片设计、不拥有制造工厂的半导体公司。他们将设计好的版图 (GDS) 交付给代工厂 (Foundry) 制造，由 OSAT 完成封装测试。这种模式极大降低了芯片创业的门槛。本页面对标的瑞芯微 (Rockchip)、全志 (Allwinner) 等边缘 SoC 公司都是 Fabless 模式。",sections:[{heading:"Fabless vs IDM vs Fab-lite",type:"matrix",headers:["维度","Fabless (无晶圆厂)","IDM (垂直整合)","Fab-lite (轻晶圆厂)"],rows:[["定义","只做设计，制造外包","设计+制造+封测全包","核心工艺自产，其余外包"],["代表企业","Qualcomm, NVIDIA, AMD, Rockchip, Allwinner","Intel, Samsung, SK Hynix, TI, ST","TI (部分外包), Onsemi, Infineon"],["优势","轻资产，灵活，专注设计","工艺与设计协同优化，产能可控","平衡灵活性+工艺优势"],["劣势","受代工厂产能/工艺制约","重资产，厂房产线投资巨大","管理复杂度高"],["典型毛利率","50-65%","40-65%","45-55%"],["适用场景","多数逻辑/SoC/数字芯片","存储/模拟/功率/车规","模拟/混合信号/特色工艺"]]},{heading:"中国大陆 Fabless 边缘 SoC 格局",type:"table",headers:["厂商","主攻方向","代表芯片","工艺节点","应用场景"],rows:[["瑞芯微 (Rockchip)","边缘 AIoT / 多媒体 SoC","RK3566/68, RK3588, RV1126","22nm/8nm","平板、盒子、AI 边缘、IPC"],["全志 (Allwinner)","平板 / 边缘 / RISC-V","T527, A523, V853, D1","22nm/28nm","平板、车载、智能家居"],["晶晨 (Amlogic)","机顶盒 / 智能屏","S905X4, S928X, A311D","12nm/6nm","OTT 盒子、智能音箱、电视"],["星宸 (Sigmastar)","IPC / 智能显示","SSD202D, SSC30KQ","28nm","IPC 摄像头、门铃、智能屏"],["爱芯元智 (Axera)","AI 视觉 SoC","AX620E, AX650N","12nm","AI IPC、车载 DMS/ADAS"],["算能 (Sophgo)","边缘/云端 AI 加速","BM1684X, SG2042","12nm","AI 推理服务器、边缘盒"],["地平线 (Horizon)","车规 AI SoC","征程 3/5/6","16nm/7nm","ADAS、自动驾驶"],["紫光展锐 (Unisoc)","手机 / IoT SoC","T606, T820 5G","12nm/6nm","功能机/智能机、IoT 模组"]]},{heading:"Fabless 成本结构分解（典型边缘 SoC）",type:"bullets",items:["芯片 BOM 成本（Die+Package+Test）：占 ASP 的 35-50%。","IP 版税（Arm/GPU/NPU 等）：占 ASP 的 3-8%。","NRE 摊销（掩膜/EDA/设计/认证）：占 ASP 的 5-15%（量越大摊越薄）。","公司运营（研发/市场/管理）：占 ASP 的 15-25%。","毛利：通常 35-55%，ASP = 成本 × (1 + 毛利率)。","代理商毛利（渠道）：通常在芯片售价上加 5-15%，最终客户价格 = ASP × 1.05-1.15。"]}]}};
+
 /* ========== 2. STATE ========== */
 const STATE = {
   tab:'overview',
+  layerDetail:'',
   chip:'RK3566',
   itemFilterDomain:'',
   itemFilterPhase:'',
@@ -900,7 +936,8 @@ function computeUnitCost(p){
 /* ========== 5. ROUTING ========== */
 function setTab(tab){
   STATE.tab = tab;
-  $$('nav.side a').forEach(a=>a.classList.toggle('active',a.dataset.tab===tab));
+  const highlight = tab==='layer-detail'?'suppliers':tab;
+  $$('nav.side a').forEach(a=>a.classList.toggle('active',a.dataset.tab===highlight));
   render();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -920,6 +957,7 @@ function render(){
     case 'domains':  m.append(renderDomains()); break;
     case 'items':    m.append(renderItems()); break;
     case 'suppliers':m.append(renderSuppliers()); break;
+    case 'layer-detail':m.append(renderLayerDetail()); break;
     case 'calc':     m.append(renderCalc()); break;
     case 'formulas': m.append(renderFormulas()); break;
     case 'glossary': m.append(renderGlossary()); break;
@@ -1369,6 +1407,7 @@ function renderSuppliers(){
     const head = el('div',{class:'group-head'});
     head.append(el('h3',{},`${layerNames[layer]||layer} · ${groups[layer].length}`));
     head.append(el('span',{class:'tag'},layer));
+    head.append(el('button',{class:'btn primary sm',style:'margin-left:10px;font-weight:600',onclick:()=>{STATE.layerDetail=layer;setTab('layer-detail');}},'查看详情'));
     card.append(head);
     const grid = el('div',{class:'supplier-grid'});
     groups[layer].forEach(s=>{
@@ -1930,6 +1969,95 @@ function renderChips(){
 
   return wrap;
 }
+
+/* ========== 12b. RENDER: LAYER DETAIL ========== */
+function renderLayerDetail(){
+  const layer = STATE.layerDetail;
+  const detail = LAYER_DETAILS[layer];
+  if(!detail) { STATE.layerDetail=''; setTab('suppliers'); return el('div'); }
+
+  const wrap = el('div');
+  wrap.append(el('div',{class:'breadcrumb'},'L4 · '+layer+' · 详情'));
+
+  // Back button
+  const backBar = el('div',{style:'margin:8px 0 14px'});
+  backBar.append(el('button',{class:'btn',style:'font-weight:600;padding:8px 16px',onclick:()=>{STATE.layerDetail='';setTab('suppliers');}},'← 返回供应商列表'));
+  wrap.append(backBar);
+
+  wrap.append(el('h1',{},detail.title));
+  wrap.append(el('div',{class:'sub',style:'margin-bottom:14px'},detail.summary));
+
+  detail.sections.forEach(sec=>{
+    const card = el('div',{class:'card',style:'margin-bottom:14px'});
+    card.append(el('h3',{style:'margin-top:0'},sec.heading));
+
+    switch(sec.type){
+      case 'table':
+        const tbl = el('table',{class:'matrix-table',style:'width:100%'});
+        if(sec.headers){
+          const thead = el('thead');
+          const tr = el('tr');
+          sec.headers.forEach(h=>tr.append(el('th',{},h)));
+          thead.append(tr); tbl.append(thead);
+        }
+        const tbody = el('tbody');
+        sec.rows.forEach(row=>{
+          const tr = el('tr');
+          row.forEach((cell,i)=>{
+            const td = el('td',{},cell);
+            if(i===0) td.style.fontWeight='600';
+            tr.append(td);
+          });
+          tbody.append(tr);
+        });
+        tbl.append(tbody); card.append(tbl);
+        break;
+
+      case 'bullets':
+        const ul = el('ul',{style:'margin:8px 0 0 18px;padding:0;line-height:1.8'});
+        sec.items.forEach(item=>ul.append(el('li',{},item)));
+        card.append(ul);
+        break;
+
+      case 'matrix':
+        const mtbl = el('table',{class:'matrix-table',style:'width:100%'});
+        if(sec.headers){
+          const thead = el('thead');
+          const tr = el('tr');
+          sec.headers.forEach(h=>tr.append(el('th',{},h)));
+          thead.append(tr); mtbl.append(thead);
+        }
+        const mbody = el('tbody');
+        sec.rows.forEach(row=>{
+          const tr = el('tr');
+          row.forEach((cell,i)=>{
+            const td = el('td',{},cell);
+            if(i===0) td.style.fontWeight='600';
+            tr.append(td);
+          });
+          mbody.append(tr);
+        });
+        mtbl.append(mbody); card.append(mtbl);
+        break;
+
+      case 'list':
+        const dl = el('dl',{style:'margin:8px 0 0 0;line-height:1.8'});
+        sec.items.forEach(item=>{
+          dl.append(el('dt',{style:'font-weight:600;margin-top:6px'},item.term));
+          dl.append(el('dd',{style:'margin-left:16px;color:var(--muted)'},item.def));
+        });
+        card.append(dl);
+        break;
+
+      default:
+        card.append(el('div',{class:'hint'},'（内容待补充）'));
+    }
+    wrap.append(card);
+  });
+
+  return wrap;
+}
+
 
 /* ========== 13. RENDER: GLOSSARY ========== */
 function renderGlossary(){
